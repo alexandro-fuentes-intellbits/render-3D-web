@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Casa 54 — Cuadro 9×6 / Machote</title>
+<style>
+  :root { --bg:#faf8f4; --ink:#1f2937; --muted:#7a7a7a; --coolS:#a9b8c4; --accent:#2f6fdb; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; touch-action:manipulation; }
+  svg#plan, svg#plan * { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; }
+  input, textarea, #inlineTxt, #mName { -webkit-user-select:text; user-select:text; }
+  body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--ink); }
+  header { padding:10px 14px 4px; }
+  h1 { margin:0; font-size:17px; }
+  .sub { color:var(--muted); font-size:12px; margin-top:2px; }
+  .bar { position:sticky; top:0; z-index:10; background:rgba(250,248,244,.96); backdrop-filter:blur(6px);
+         display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:8px 12px; border-bottom:1px solid #eee; }
+  .grp { display:flex; gap:4px; align-items:center; }
+  .sep { width:1px; height:26px; background:#ddd; margin:0 4px; }
+  button, .tool { font:inherit; border:1px solid var(--coolS); background:#fff; color:var(--ink);
+          border-radius:9px; padding:8px 11px; cursor:pointer; font-size:14px; min-height:40px;
+          display:inline-flex; align-items:center; gap:6px;
+          transition: transform .09s ease, background .15s, color .15s, box-shadow .18s; }
+  button:hover, .tool:hover { background:#f2f5f8; }
+  button:active, .tool:active { transform: scale(.94); }
+  button.active, .tool.active { background:var(--ink); color:#fff; border-color:var(--ink); box-shadow:0 3px 10px rgba(0,0,0,.18); transform: translateY(-1px); }
+  .ico { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex:0 0 auto; }
+  .sw { width:30px; height:30px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1px #ccc; padding:0; transition: box-shadow .15s, transform .1s; }
+  .sw:active { transform: scale(.9); }
+  .sw.active { box-shadow:0 0 0 3px var(--ink); }
+  .wbtn { width:42px; justify-content:center; }
+  #inlineTxt { position:fixed; z-index:60; display:none; transform:translate(-6px,-55%);
+    border:1.5px dashed var(--accent); border-radius:6px; padding:1px 6px; background:rgba(255,255,255,.96);
+    font-weight:800; line-height:1.2; outline:none; min-width:70px; box-shadow:0 2px 10px rgba(0,0,0,.15); }
+  .plancard { padding:10px 12px 24px; }
+  .planbox { background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,.08); padding:6px; overflow:hidden; }
+  svg#plan { display:block; width:100%; height:auto; touch-action:none; cursor:crosshair; }
+  svg#plan.mode-text { cursor:copy; }
+  svg#plan.mode-pin { cursor:crosshair; }
+  svg#plan.mode-select { cursor:pointer; }
+  .lbl { cursor:move; }
+  .lbl.grabbing { cursor:grabbing; }
+  .card { background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,.08); padding:12px 14px; margin:12px 0; }
+  .card h2 { margin:0 0 8px; font-size:14px; }
+  .hint { font-size:12.5px; color:var(--muted); line-height:1.55; }
+  .coords { font-variant-numeric:tabular-nums; font-weight:600; }
+  #pinlist { list-style:none; margin:0; padding:0; font-size:13px; }
+  #pinlist li { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid #eee; }
+  .badge { display:inline-flex; width:20px; height:20px; align-items:center; justify-content:center; border-radius:50%; background:#d63b3b; color:#fff; font-size:11px; font-weight:700; }
+  @keyframes pop { from { opacity:0; transform:scale(.55); } to { opacity:1; transform:scale(1); } }
+  .pop { animation: pop .18s cubic-bezier(.34,1.56,.64,1); transform-box: fill-box; transform-origin:center; }
+  @keyframes dash { to { stroke-dashoffset: -16; } }
+  #selbox { fill:none; stroke:var(--accent); stroke-width:1.6; stroke-dasharray:6 4; animation: dash 1s linear infinite; pointer-events:none; }
+  .delhandle { cursor:pointer; }
+  #mgr .row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
+  #mName { flex:1 1 160px; min-width:140px; font:inherit; font-size:14px; padding:8px 10px; border:1px solid var(--coolS); border-radius:9px; }
+  .stat { font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:999px; text-transform:uppercase; letter-spacing:.03em; }
+  .stat.borrador { background:#eef1f4; color:#516074; }
+  .stat.publicado { background:#e2f6e9; color:#1f7a43; }
+  .stat.archivado { background:#f1eee7; color:#8a7d63; }
+  #mList { list-style:none; margin:6px 0 0; padding:0; }
+  #mList li { display:flex; align-items:center; gap:9px; padding:9px 8px; border-bottom:1px solid #eee; cursor:pointer; border-radius:8px; transition:background .12s; }
+  #mList li:hover { background:#f5f7f9; }
+  #mList li.cur { background:#eef4ff; box-shadow:inset 3px 0 0 var(--accent); }
+  #mList .nm { flex:1; font-size:13.5px; font-weight:600; }
+  #mList .dt { font-size:11px; color:#9a9a9a; }
+  #mList .del { border:0; background:transparent; color:#b3261e; font-size:15px; cursor:pointer; padding:2px 8px; min-height:auto; border-radius:6px; }
+  #mList .del:hover { background:#fbe9e7; }
+  #mDelete { border-color:#e6b8b3; color:#b3261e; }
+  #mDelete:hover { background:#fbe9e7; }
+  #mPaint.active { background:#2fa84f; border-color:#2fa84f; color:#fff; }
+  #modal { position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.42); }
+  #modal.show { display:flex; }
+  #modal .box { background:#fff; border-radius:14px; padding:18px 18px 14px; max-width:360px; width:86%; box-shadow:0 12px 44px rgba(0,0,0,.28); animation:pop .16s ease-out; }
+  #modal p { margin:0 0 16px; font-size:14.5px; line-height:1.5; }
+  #modal .acts { display:flex; gap:8px; justify-content:flex-end; }
+  #modal .danger { background:#d63b3b; border-color:#d63b3b; color:#fff; }
+  #modal .danger:hover { background:#c22f2f; }
+  /* modo ampliado (pantalla completa) — canvas grande + herramientas, ideal móvil */
+  body.expanded { display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden; }
+  body.expanded header { display:none; }
+  /* barra HORIZONTAL (fila) arriba, compacta y deslizable — teléfono acostado */
+  body.expanded .bar { position:static; flex:0 0 auto; flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; padding:6px 10px; }
+  body.expanded .bar .grp, body.expanded .bar button, body.expanded .bar #mName { flex:0 0 auto; }
+  body.expanded .bar button:not(.sw):not(.wbtn) { min-height:36px; padding:6px 10px; }
+  body.expanded .plancard { flex:1 1 auto; min-height:0; padding:4px; margin:0; display:flex; }
+  body.expanded #mgr, body.expanded .plancard > .card { display:none; }
+  body.expanded .planbox { flex:1; margin:0; border-radius:0; box-shadow:none; display:flex; align-items:center; justify-content:center; min-height:0; min-width:0; padding:2px; }
+  body.expanded svg#plan { width:auto; height:auto; max-width:none; max-height:none; flex:0 0 auto; }
+  svg#plan.rot90 { transform: rotate(90deg); transform-origin:center; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Casa 54 — Cuadro 9.00 × 6.00 m (en blanco)</h1>
+  <div class="sub">Solo el contorno con medidas. Dibuja, rotula y mueve textos. Envía captura al terminar.</div>
+</header>
+
+<div class="bar">
+  <div class="grp">
+    <button id="mDraw" class="tool active"><svg class="ico" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Dibujar</button>
+    <button id="mText" class="tool"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/></svg>Texto</button>
+    <button id="mSelect" class="tool"><svg class="ico" viewBox="0 0 24 24"><path d="M4 3l7 17 2-7 7-2z"/></svg>Elegir</button>
+    <button id="mPin" class="tool"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-6-5.6-6-10a6 6 0 1 1 12 0c0 4.4-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>Pin</button>
+  </div>
+  <div class="sep"></div>
+  <div class="grp" id="colors">
+    <button class="sw active" data-c="#e5372b" style="background:#e5372b"></button>
+    <button class="sw" data-c="#1f6feb" style="background:#1f6feb"></button>
+    <button class="sw" data-c="#2fa84f" style="background:#2fa84f"></button>
+    <button class="sw" data-c="#f0a500" style="background:#f0a500"></button>
+    <button class="sw" data-c="#222" style="background:#222"></button>
+  </div>
+  <div class="sep"></div>
+  <div class="grp" id="widths">
+    <button class="tool wbtn" data-w="3">•</button>
+    <button class="tool wbtn active" data-w="6">●</button>
+    <button class="tool wbtn" data-w="11">⬤</button>
+  </div>
+  <div class="sep"></div>
+  <div class="grp">
+    <button id="mPen" title="Dibuja con la punta desplazada (a la izquierda) del dedo"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>Punta</button>
+    <button id="mPaint" style="display:none">▶ Empezar a pintar</button>
+  </div>
+  <div class="sep"></div>
+  <div class="grp">
+    <button id="undo"><svg class="ico" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a6 6 0 0 1 0 12h-3"/></svg>Deshacer</button>
+    <button id="clearDraw"><svg class="ico" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="m6 16 8-8 5 5-8 8H8z"/></svg>Borrar</button>
+    <button id="clearPins"><svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-6-5.6-6-10a6 6 0 1 1 12 0c0 4.4-6 10-6 10z"/><path d="M4 4l16 16"/></svg>Pines</button>
+  </div>
+  <div class="sep"></div>
+  <div class="grp">
+    <button id="mExpand"><svg class="ico" viewBox="0 0 24 24"><path d="M8 3H3v5"/><path d="M21 8V3h-5"/><path d="M16 21h5v-5"/><path d="M3 16v5h5"/></svg><span id="expLbl">Ampliar</span></button>
+  </div>
+</div>
+
+<div class="plancard">
+  <div class="card" id="mgr">
+    <h2>Machotes (borradores)</h2>
+    <div class="row">
+      <input id="mName" placeholder="Nombre del machote" />
+      <span id="mStatus" class="stat borrador">borrador</span>
+    </div>
+    <div class="row">
+      <button id="mNew">➕ Nuevo</button>
+      <button id="mSave">💾 Guardar</button>
+      <button id="mPublish">🚀 Publicar</button>
+      <button id="mArchive">🗄️ Archivar</button>
+      <button id="mDelete">🗑️ Eliminar</button>
+    </div>
+    <div class="hint" style="margin-top:2px">Solo <b>1</b> puede estar <b>publicado</b> (ese se usa para el diseño). Los demás quedan en borrador o archivados.</div>
+    <ul id="mList"></ul>
+  </div>
+  <div class="planbox">
+    <svg id="plan" class="mode-draw" viewBox="0 0 900 640" aria-label="Cuadro 9x6">
+      <g id="static"></g>
+      <g id="draw"></g>
+      <g id="sel"></g>
+      <g id="pins"></g>
+      <g id="cursor" style="pointer-events:none"></g>
+    </svg>
+  </div>
+
+  <div class="card">
+    <h2>Cómo usar</h2>
+    <div class="hint">
+      • <b>Dibujar</b>: traza con el dedo (color/grosor arriba).<br>
+      • <b>Texto</b>: toca un punto del cuadro y <b>escribe ahí mismo</b> (Enter para fijar). En este modo puedes <b>tocar un texto y arrastrarlo</b> (drag &amp; drop).<br>
+      • <b>Pin</b>: toca para marcar un punto con coordenadas (metros).<br>
+      • <b>Deshacer</b> / <b>Borrar</b>. Al terminar: <b>captura</b> y envíamela.<br>
+      • Cursor: <span id="cur" class="coords">x=–, z=–</span>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Pines</h2>
+    <ul id="pinlist"><li class="hint">Sin pines aún.</li></ul>
+  </div>
+</div>
+
+<input id="inlineTxt" autocomplete="off" placeholder="escribe…" />
+
+<div id="modal"><div class="box"><p id="modalMsg"></p><div class="acts"><button id="modalCancel">Cancelar</button><button id="modalOk" class="danger">Eliminar</button></div></div></div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const svg=document.getElementById('plan');
+const gStatic=document.getElementById('static'), gDraw=document.getElementById('draw');
+const gSel=document.getElementById('sel'), gPins=document.getElementById('pins'), gCursor=document.getElementById('cursor');
+const list=document.getElementById('pinlist'), curEl=document.getElementById('cur'), inlineTxt=document.getElementById('inlineTxt');
+
+const W=9, D=6, S=76, OX=95, OY=95+D*S;
+const X=x=>OX+x*S, Y=z=>OY-z*S;
+const el=(t,a)=>{const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); return e;};
+const add=(t,a)=>{const e=el(t,a); gStatic.appendChild(e); return e;};
+
+// piso + retícula 0.5 m + contorno + cotas
+add('rect',{x:X(0),y:Y(6),width:W*S,height:D*S,fill:'#ffffff'});
+for(let x=0;x<=W+1e-6;x+=0.5) add('line',{x1:X(x),y1:Y(0),x2:X(x),y2:Y(6),stroke:'#ece7dd','stroke-width':(Math.abs(x%1)<1e-6?1.1:0.6)});
+for(let z=0;z<=D+1e-6;z+=0.5) add('line',{x1:X(0),y1:Y(z),x2:X(W),y2:Y(z),stroke:'#ece7dd','stroke-width':(Math.abs(z%1)<1e-6?1.1:0.6)});
+add('rect',{x:X(0),y:Y(6),width:W*S,height:D*S,fill:'none',stroke:'#1a1a1a','stroke-width':9});
+const dl={stroke:'#8a8a8a','stroke-width':1};
+add('line',{x1:X(0),y1:Y(6)-42,x2:X(9),y2:Y(6)-42,...dl});
+add('line',{x1:X(0),y1:Y(6)-48,x2:X(0),y2:Y(6)-36,...dl});
+add('line',{x1:X(9),y1:Y(6)-48,x2:X(9),y2:Y(6)-36,...dl});
+{const t=add('text',{x:X(4.5),y:Y(6)-50,'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#1f2937'});t.textContent='9.00 m';}
+add('line',{x1:X(0)-42,y1:Y(0),x2:X(0)-42,y2:Y(6),...dl});
+add('line',{x1:X(0)-48,y1:Y(0),x2:X(0)-36,y2:Y(0),...dl});
+add('line',{x1:X(0)-48,y1:Y(6),x2:X(0)-36,y2:Y(6),...dl});
+{const cy=(Y(0)+Y(6))/2,cx=X(0)-54;const t=add('text',{x:cx,y:cy,'text-anchor':'middle','font-size':15,'font-weight':700,fill:'#1f2937',transform:'rotate(-90 '+cx+' '+cy+')'});t.textContent='6.00 m';}
+{const t=add('text',{x:X(4.5),y:Y(0)+34,'text-anchor':'middle','font-size':11,fill:'#5a7d97'});t.textContent='FRENTE — z=0   ·   origen (0,0) abajo-izquierda';}
+
+// ===== estado =====
+function toSvg(evt){ const pt=svg.createSVGPoint(); pt.x=evt.clientX; pt.y=evt.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
+function toSvgAt(cx,cy){ const pt=svg.createSVGPoint(); pt.x=cx; pt.y=cy; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
+function showTip(tx,ty,fx,fy){ gCursor.innerHTML='';
+  if(fx==null){ fx=tx+42; fy=ty+24; }
+  const dx=fx-tx, dy=fy-ty, dist=Math.hypot(dx,dy)||1, ang=Math.atan2(dy,dx)*180/Math.PI;
+  const cone=Math.min(22, dist*0.30), bw=Math.max(8, dist-cone-12);
+  const g=el('g',{transform:'translate('+tx+' '+ty+') rotate('+ang.toFixed(2)+')'});
+  g.appendChild(el('path',{d:'M0 0 L'+cone+' -8 L'+cone+' 8 Z', fill:'#e6b84e', stroke:'#a97b28','stroke-width':1}));   // punta de madera
+  g.appendChild(el('path',{d:'M0 0 L8 -3 L8 3 Z', fill:'#2b2b2b'}));                                                    // grafito
+  g.appendChild(el('rect',{x:cone,y:-8,width:bw,height:16,rx:2, fill:color, stroke:'#0003','stroke-width':1}));         // cuerpo (color activo)
+  g.appendChild(el('rect',{x:cone+bw,y:-8,width:6,height:16, fill:'#c9c9c9'}));                                         // virola
+  g.appendChild(el('rect',{x:cone+bw+6,y:-8,width:7,height:16,rx:2, fill:'#e98b8b'}));                                  // goma
+  gCursor.appendChild(g);
+  gCursor.appendChild(el('circle',{cx:tx,cy:ty,r:3.5,fill:'#fff',stroke:color,'stroke-width':2})); }                    // punto exacto
+function clearTip(){ gCursor.innerHTML=''; }
+// ---- reconocimiento de formas (mantener 2s) ----
+function pathPoints(d){ const n=(d.match(/-?\d+(?:\.\d+)?/g)||[]).map(Number); const p=[]; for(let i=0;i+1<n.length;i+=2) p.push({x:n[i],y:n[i+1]}); return p; }
+function recognizeShape(pts){ if(pts.length<5) return null;
+  const S=pts[0], E=pts[pts.length-1]; let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9,len=0;
+  for(let i=0;i<pts.length;i++){ const p=pts[i]; xmin=Math.min(xmin,p.x);xmax=Math.max(xmax,p.x);ymin=Math.min(ymin,p.y);ymax=Math.max(ymax,p.y); if(i) len+=Math.hypot(p.x-pts[i-1].x,p.y-pts[i-1].y); }
+  const w=xmax-xmin, h=ymax-ymin, diag=Math.hypot(w,h); if(diag<14||len<14) return null;
+  const chord=Math.hypot(E.x-S.x,E.y-S.y);
+  const closed = chord < 0.25*len && len>diag*0.85;
+  if(!closed && chord>0.90*len) return {type:'line', a:S, b:E};                 // recta
+  if(closed){ const cx=(xmin+xmax)/2, cy=(ymin+ymax)/2;
+    let rm=0; for(const p of pts) rm+=Math.hypot(p.x-cx,p.y-cy); rm/=pts.length;
+    let vr=0; for(const p of pts) vr+=Math.abs(Math.hypot(p.x-cx,p.y-cy)-rm); vr/=pts.length;
+    const circleness=vr/(rm||1);
+    if(circleness<0.11) return {type:'ellipse', cx, cy, rx:w/2, ry:h/2};        // círculo/elipse
+    return {type:'rect', xmin,ymin,xmax,ymax};                                 // cerrado no circular → rectángulo
+  }
+  return {type:'line', a:S, b:E}; }
+function shapeToPath(s){ const f=n=>n.toFixed(1);
+  if(s.type==='line') return 'M '+f(s.a.x)+' '+f(s.a.y)+' L '+f(s.b.x)+' '+f(s.b.y);
+  if(s.type==='rect') return 'M '+f(s.xmin)+' '+f(s.ymin)+' L '+f(s.xmax)+' '+f(s.ymin)+' L '+f(s.xmax)+' '+f(s.ymax)+' L '+f(s.xmin)+' '+f(s.ymax)+' Z';
+  const {cx,cy,rx,ry}=s; return 'M '+f(cx-rx)+' '+f(cy)+' A '+f(rx)+' '+f(ry)+' 0 1 0 '+f(cx+rx)+' '+f(cy)+' A '+f(rx)+' '+f(ry)+' 0 1 0 '+f(cx-rx)+' '+f(cy)+' Z'; }
+function recognizeCurrent(){ if(!drawing||drawing.done) return; const s=recognizeShape(pathPoints(drawing.d)); if(!s) return;
+  drawing.path.setAttribute('d', shapeToPath(s)); drawing.done=true; clearTip(); }
+const toM=(sx,sy)=>({x:(sx-OX)/S, z:(OY-sy)/S});
+const inRoom=(sx,sy)=> sx>=OX&&sx<=OX+W*S&&sy<=OY&&sy>=OY-D*S;
+let mode='draw', color='#e5372b', width=6; let pins=[]; let penTip=false; const TIPDX=-56, TIPDY=-30;
+const hist=[]; // pila de acciones reversibles (rollback)
+function pushUndo(fn){ hist.push(fn); if(hist.length>400) hist.shift(); }
+const modeBtns={draw:mDraw,text:mText,select:mSelect,pin:mPin};
+function setMode(m){ mode=m; for(const k in modeBtns) modeBtns[k].classList.toggle('active', k===m);
+  svg.classList.remove('mode-draw','mode-text','mode-select','mode-pin'); svg.classList.add('mode-'+m);
+  if(m!=='text' && m!=='select') deselect(); }
+mDraw.onclick=()=>setMode('draw'); mText.onclick=()=>setMode('text'); mSelect.onclick=()=>setMode('select'); mPin.onclick=()=>setMode('pin');
+const mExpand=document.getElementById('mExpand'), expLbl=document.getElementById('expLbl');
+function layoutPlan(){
+  if(!document.body.classList.contains('expanded')){ svg.classList.remove('rot90'); svg.style.width=''; svg.style.height=''; return; }
+  const box=document.querySelector('.planbox'); if(!box) return;
+  const bw=box.clientWidth-2, bh=box.clientHeight-2;
+  const sN=Math.min(bw/900, bh/640);   // sin rotar (plan 900×640)
+  const sR=Math.min(bw/640, bh/900);   // rotado 90° (visual 640×900)
+  if(sR>sN){ svg.style.width=(900*sR)+'px'; svg.style.height=(640*sR)+'px'; svg.classList.add('rot90'); }
+  else     { svg.style.width=(900*sN)+'px'; svg.style.height=(640*sN)+'px'; svg.classList.remove('rot90'); }
+}
+mExpand.onclick=()=>{ const on=document.body.classList.toggle('expanded'); expLbl.textContent=on?'Reducir':'Ampliar';
+  requestAnimationFrame(layoutPlan); setTimeout(layoutPlan,60); setTimeout(layoutPlan,260); };
+window.addEventListener('resize', layoutPlan);
+window.addEventListener('orientationchange', ()=>setTimeout(layoutPlan,250));
+const mPen=document.getElementById('mPen'), mPaint=document.getElementById('mPaint');
+let penArmed=false;
+function updatePenUI(){ mPen.classList.toggle('active',penTip); mPaint.style.display = penTip ? '' : 'none';
+  mPaint.textContent = penArmed ? '⏸ Pausar' : '▶ Empezar a pintar'; mPaint.classList.toggle('active',penArmed); }
+mPen.onclick=()=>{ penTip=!penTip; if(!penTip) penArmed=false; updatePenUI(); };
+mPaint.onclick=()=>{ penArmed=!penArmed; updatePenUI(); };
+updatePenUI();
+document.querySelectorAll('#colors .sw').forEach(b=>b.onclick=()=>{color=b.dataset.c;
+  document.querySelectorAll('#colors .sw').forEach(x=>x.classList.remove('active'));b.classList.add('active');});
+document.querySelectorAll('#widths .tool').forEach(b=>b.onclick=()=>{width=+b.dataset.w;
+  document.querySelectorAll('#widths .tool').forEach(x=>x.classList.remove('active'));b.classList.add('active');});
+
+// ===== selección (texto o trazo) =====
+let selG=null;
+function deselect(){ selG=null; gSel.innerHTML=''; }
+function bboxOf(elm){ const b=elm.getBBox();
+  if(elm.classList&&elm.classList.contains('lbl')){ const p=elm._pos||{x:0,y:0}; return {x:b.x+p.x,y:b.y+p.y,w:b.width,h:b.height}; }
+  return {x:b.x,y:b.y,w:b.width,h:b.height}; }
+function updateSel(){ gSel.innerHTML=''; if(!selG)return; const b=bboxOf(selG);
+  gSel.appendChild(el('rect',{id:'selbox',x:b.x-7,y:b.y-5,width:b.w+14,height:b.h+10,rx:5}));
+  const hx=b.x+b.w+4, hy=b.y-8, h=el('g',{class:'delhandle'});
+  h.appendChild(el('circle',{cx:hx,cy:hy,r:24,fill:'transparent'}));                 // área táctil amplia
+  h.appendChild(el('circle',{cx:hx,cy:hy,r:14,fill:'#d63b3b',stroke:'#fff','stroke-width':2}));
+  const xx=el('text',{x:hx,y:hy+5,'text-anchor':'middle','font-size':17,'font-weight':800,fill:'#fff','pointer-events':'none'}); xx.textContent='×'; h.appendChild(xx);
+  gSel.appendChild(h); }
+function drawElFrom(node){ const lg=labelFrom(node); if(lg) return lg; let n=node; while(n&&n!==svg){ if(n.parentNode===gDraw) return n; n=n.parentNode; } return null; }
+// distancia punto→segmento
+function segDist(px,py,x1,y1,x2,y2){ const dx=x2-x1,dy=y2-y1,l2=dx*dx+dy*dy||1; let t=((px-x1)*dx+(py-y1)*dy)/l2; t=Math.max(0,Math.min(1,t)); return Math.hypot(px-(x1+t*dx),py-(y1+t*dy)); }
+// elige la línea/etiqueta MÁS CERCANA al toque (no requiere tocar exacto)
+function pickNear(px,py){ let best=null,bd=1e9; const TH=28;
+  gDraw.querySelectorAll('path, g.lbl').forEach(elm=>{ let d=1e9;
+    if(elm.tagName&&elm.tagName.toLowerCase()==='path'){ const pts=pathPoints(elm.getAttribute('d')||'');
+      if(pts.length===1) d=Math.hypot(px-pts[0].x,py-pts[0].y);
+      for(let i=1;i<pts.length;i++) d=Math.min(d,segDist(px,py,pts[i-1].x,pts[i-1].y,pts[i].x,pts[i].y)); }
+    else { const b=bboxOf(elm); const cx=Math.max(b.x,Math.min(px,b.x+b.w)),cy=Math.max(b.y,Math.min(py,b.y+b.h)); d=Math.hypot(px-cx,py-cy); }
+    if(d<bd){ bd=d; best=elm; } });
+  return bd<=TH?best:null; }
+function deleteEl(elm){ const parent=elm.parentNode; if(!parent) return; const next=elm.nextSibling; if(elm===selG) deselect(); elm.remove();
+  pushUndo(()=>{ if(next&&next.parentNode===parent) parent.insertBefore(elm,next); else parent.appendChild(elm); }); }
+function deleteSel(){ if(selG) deleteEl(selG); }
+function makeLabel(px,py,s){
+  const g=el('g',{class:'lbl'}); g._pos={x:px,y:py}; g.setAttribute('transform','translate('+px+' '+py+')');
+  const t=el('text',{x:0,y:0,'font-size':(14+width*2),'font-weight':700,fill:color,'text-anchor':'middle','dominant-baseline':'middle',class:'pop'}); t.textContent=s;
+  g.appendChild(t); gDraw.appendChild(g);
+  const bb=t.getBBox(); g.insertBefore(el('rect',{x:bb.x-8,y:bb.y-6,width:bb.width+16,height:bb.height+12,fill:'transparent'}), t);
+  return g;
+}
+function labelFrom(node){ let n=node; while(n&&n!==svg){ if(n.classList&&n.classList.contains('lbl')) return n; n=n.parentNode; } return null; }
+
+// escritura EN EL LUGAR: input flotante sobre el punto tocado
+let pendingPos=null, editingLbl=null;
+function openInline(clientX, clientY, sx, sy){
+  editingLbl=null; pendingPos={x:sx, y:sy};
+  inlineTxt.value=''; inlineTxt.style.left=clientX+'px'; inlineTxt.style.top=clientY+'px';
+  inlineTxt.style.color=color; inlineTxt.style.fontSize=(14+width*2)+'px';
+  inlineTxt.style.display='block'; setTimeout(()=>inlineTxt.focus(),0);
+}
+function editLabel(lg){ const t=lg.querySelector('text'); const r=lg.getBoundingClientRect();
+  editingLbl=lg; pendingPos=null; selG=lg; updateSel();
+  inlineTxt.value=t.textContent; inlineTxt.style.left=(r.left+r.width/2)+'px'; inlineTxt.style.top=(r.top+r.height/2)+'px';
+  inlineTxt.style.color=t.getAttribute('fill')||color; inlineTxt.style.fontSize=(t.getAttribute('font-size')||18)+'px';
+  inlineTxt.style.display='block'; setTimeout(()=>{ inlineTxt.focus(); inlineTxt.select(); },0);
+}
+function relayoutLabel(lg){ const t=lg.querySelector('text'), r=lg.querySelector('rect'); const bb=t.getBBox();
+  if(r){ r.setAttribute('x',bb.x-8); r.setAttribute('y',bb.y-6); r.setAttribute('width',bb.width+16); r.setAttribute('height',bb.height+12); } }
+function commitInline(){ const s=(inlineTxt.value||'').trim(); inlineTxt.style.display='none';
+  if(editingLbl){ const lg=editingLbl; editingLbl=null;
+    if(!s){ deleteEl(lg); return; }
+    lg.querySelector('text').textContent=s; relayoutLabel(lg); selG=lg; updateSel(); return; }
+  if(s&&pendingPos){ const g=makeLabel(pendingPos.x,pendingPos.y,s); pushUndo(()=>{ if(g===selG) deselect(); g.remove(); }); selG=g; updateSel(); }
+  pendingPos=null; }
+inlineTxt.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); commitInline(); }
+  else if(e.key==='Escape'){ inlineTxt.style.display='none'; pendingPos=null; editingLbl=null; } });
+inlineTxt.addEventListener('blur',()=>{ if(inlineTxt.style.display==='block') commitInline(); });
+let lastTap={el:null,t:0};
+
+// ===== pines =====
+function renderPins(){ gPins.innerHTML=''; list.innerHTML='';
+  if(!pins.length){ list.innerHTML='<li class="hint">Sin pines aún.</li>'; return; }
+  pins.forEach((p,i)=>{ const c=el('circle',{cx:p.sx,cy:p.sy,r:12,fill:'#d63b3b',stroke:'#fff','stroke-width':2,class:'pop'}); gPins.appendChild(c);
+    const t=el('text',{x:p.sx,y:p.sy+4,'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#fff'}); t.textContent=i+1; gPins.appendChild(t);
+    const li=document.createElement('li'); li.innerHTML='<span class="badge">'+(i+1)+'</span><span class="coords">x = '+p.x.toFixed(2)+' m , z = '+p.z.toFixed(2)+' m</span>'; list.appendChild(li); }); }
+
+// ===== interacción =====
+let drawing=null, dragging=null, previewing=false, holdTimer=null;
+svg.addEventListener('pointerdown',e=>{ const p=toSvg(e);
+  if(e.target.closest && e.target.closest('.delhandle')){ deleteSel(); return; }
+  if(mode==='select'){ const t=pickNear(p.x,p.y)||drawElFrom(e.target); if(t){ selG=t; updateSel(); } else deselect(); return; }
+  if(mode==='text'){
+    if(inlineTxt.style.display==='block') commitInline();
+    const lg=labelFrom(e.target);
+    if(lg){ const now=Date.now();
+      if(lastTap.el===lg && now-lastTap.t<330){ lastTap={el:null,t:0}; editLabel(lg); return; }
+      lastTap={el:lg,t:now};
+      dragging={g:lg, sx:p.x, sy:p.y, ox:lg._pos.x, oy:lg._pos.y}; lg.classList.add('grabbing');
+      selG=lg; updateSel(); svg.setPointerCapture(e.pointerId); return; }
+    if(!inRoom(p.x,p.y)) { deselect(); return; }
+    openInline(e.clientX, e.clientY, p.x, p.y); return;
+  }
+  if(mode==='pin'){ if(!inRoom(p.x,p.y))return; const m=toM(p.x,p.y); const pin={sx:p.x,sy:p.y,x:m.x,z:m.z}; pins.push(pin); renderPins();
+    pushUndo(()=>{ const i=pins.indexOf(pin); if(i>=0){ pins.splice(i,1); renderPins(); } }); return; }
+  // dibujar
+  svg.setPointerCapture(e.pointerId);
+  const pd = penTip ? toSvgAt(e.clientX+TIPDX, e.clientY+TIPDY) : p;
+  if(penTip && !penArmed){ previewing=true; showTip(pd.x,pd.y,p.x,p.y); return; }   // vista previa (aún sin pintar)
+  const path=el('path',{fill:'none',stroke:color,'stroke-width':width,'stroke-linecap':'round','stroke-linejoin':'round',d:'M '+pd.x.toFixed(1)+' '+pd.y.toFixed(1)});
+  gDraw.appendChild(path); drawing={path,d:path.getAttribute('d'),done:false}; if(penTip) showTip(pd.x,pd.y,p.x,p.y);
+  clearTimeout(holdTimer); holdTimer=setTimeout(recognizeCurrent,2000);
+});
+svg.addEventListener('pointermove',e=>{ const p=toSvg(e);
+  if(inRoom(p.x,p.y)){ const m=toM(p.x,p.y); curEl.textContent='x='+m.x.toFixed(2)+', z='+m.z.toFixed(2); }
+  if(previewing){ const pd = penTip ? toSvgAt(e.clientX+TIPDX, e.clientY+TIPDY) : p; showTip(pd.x,pd.y,p.x,p.y); return; }
+  if(dragging){ const nx=dragging.ox+(p.x-dragging.sx), ny=dragging.oy+(p.y-dragging.sy);
+    dragging.g._pos={x:nx,y:ny}; dragging.g.setAttribute('transform','translate('+nx+' '+ny+')'); updateSel(); return; }
+  if(!drawing || drawing.done)return; const pd = penTip ? toSvgAt(e.clientX+TIPDX, e.clientY+TIPDY) : p;
+  drawing.d+=' L '+pd.x.toFixed(1)+' '+pd.y.toFixed(1); drawing.path.setAttribute('d',drawing.d); if(penTip) showTip(pd.x,pd.y,p.x,p.y);
+  clearTimeout(holdTimer); holdTimer=setTimeout(recognizeCurrent,2000);
+});
+function endAll(){ clearTimeout(holdTimer); previewing=false;
+  if(dragging){ dragging.g.classList.remove('grabbing'); dragging=null; }
+  if(drawing){ const pth=drawing.path; pushUndo(()=>{ if(pth===selG) deselect(); pth.remove(); }); drawing=null; } clearTip(); }
+svg.addEventListener('pointerup',endAll); svg.addEventListener('pointercancel',endAll);
+// evitar zoom por pinch y doble-tap (iOS)
+document.addEventListener('gesturestart', e=>e.preventDefault(), {passive:false});
+document.addEventListener('gesturechange', e=>e.preventDefault(), {passive:false});
+let _lastTE=0;
+svg.addEventListener('touchend', e=>{ const n=Date.now(); if(n-_lastTE<=350 && e.cancelable) e.preventDefault(); _lastTE=n; }, {passive:false});
+
+undo.onclick=()=>{ const fn=hist.pop(); if(fn) fn(); };
+clearDraw.onclick=()=>{ const nodes=[...gDraw.childNodes]; if(!nodes.length) return; gDraw.innerHTML=''; deselect();
+  pushUndo(()=>{ nodes.forEach(n=>gDraw.appendChild(n)); }); };
+clearPins.onclick=()=>{ if(!pins.length) return; const old=pins; pins=[]; renderPins();
+  pushUndo(()=>{ pins=old; renderPins(); }); };
+// borrar con teclado el elemento seleccionado (PC)
+document.addEventListener('keydown',e=>{ if((e.key==='Delete'||e.key==='Backspace') && selG
+  && document.activeElement!==inlineTxt && document.activeElement!==mName){ e.preventDefault(); deleteSel(); } });
+
+// ===== gestión de machotes (guardar / publicar / archivar) =====
+const API='/api/machotes';
+const mName=document.getElementById('mName'), mStatus=document.getElementById('mStatus'), mList=document.getElementById('mList');
+let store=[], curId=null;
+const uid=()=>'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>(s||'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+const fmt=ts=>{ if(!ts)return''; const d=new Date(ts); return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); };
+const current=()=>store.find(m=>m.id===curId);
+function setPill(st){ mStatus.className='stat '+st; mStatus.textContent=st; }
+function snapshot(){ return { draw:gDraw.innerHTML, pins:JSON.parse(JSON.stringify(pins)) }; }
+function rehydrate(){ gDraw.querySelectorAll('.lbl').forEach(g=>{ const m=/translate\(([-\d.]+)\s+([-\d.]+)\)/.exec(g.getAttribute('transform')||''); g._pos=m?{x:+m[1],y:+m[2]}:{x:0,y:0}; }); }
+function applyData(d){ gDraw.innerHTML=(d&&d.draw)||''; pins=(d&&d.pins)?JSON.parse(JSON.stringify(d.pins)):[]; rehydrate(); renderPins(); deselect(); hist.length=0; }
+function renderList(){ mList.innerHTML=''; const ord={publicado:0,borrador:1,archivado:2};
+  const s=[...store].sort((a,b)=>(ord[a.status]-ord[b.status])||(b.updatedAt-a.updatedAt));
+  if(!s.length){ mList.innerHTML='<li class="hint" style="cursor:default;border:0">Aún no hay machotes guardados.</li>'; return; }
+  s.forEach(m=>{ const li=document.createElement('li'); if(m.id===curId) li.className='cur';
+    const delBtn = m.status==='publicado' ? '' : '<button class="del" title="Eliminar">✕</button>';
+    li.innerHTML='<span class="stat '+m.status+'">'+m.status+'</span><span class="nm">'+esc(m.name)+'</span><span class="dt">'+fmt(m.updatedAt)+'</span>'+delBtn;
+    li.onclick=()=>loadMachote(m.id);
+    const db=li.querySelector('.del'); if(db) db.onclick=(e)=>{ e.stopPropagation(); deleteMachote(m.id); };
+    mList.appendChild(li); }); }
+function commit(){ const data=snapshot(); const name=(mName.value||'Sin nombre').trim(); let m=current();
+  if(!m){ m={id:uid(),name,status:'borrador',updatedAt:Date.now(),data}; store.push(m); curId=m.id; }
+  else { m.name=name; m.data=data; m.updatedAt=Date.now(); } return m; }
+async function push(){ try{ await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(store)});}catch(e){} }
+async function pull(){ try{ const r=await fetch(API); store=await r.json(); }catch(e){ store=[]; } if(!Array.isArray(store)) store=[];
+  const pub=store.find(m=>m.status==='publicado');
+  const first=pub||[...store].sort((a,b)=>b.updatedAt-a.updatedAt)[0];
+  if(first){ curId=first.id; mName.value=first.name; setPill(first.status); applyData(first.data); }
+  else { curId=null; mName.value='Machote 1'; setPill('borrador'); }
+  renderList(); }
+async function doSave(){ const m=commit(); setPill(m.status); renderList(); await push(); }
+async function doPublish(){ const m=commit(); store.forEach(x=>{ if(x.status==='publicado'&&x.id!==m.id) x.status='borrador'; }); m.status='publicado'; setPill('publicado'); renderList(); await push(); }
+async function doArchive(){ const m=commit(); m.status='archivado'; setPill('archivado'); renderList(); await push(); }
+async function doNew(){ commit(); await push(); curId=null; mName.value='Machote '+(store.length+1); setPill('borrador');
+  gDraw.innerHTML=''; pins=[]; renderPins(); deselect(); hist.length=0; renderList(); }
+async function loadMachote(id){ if(id===curId) return; commit(); await push();
+  const m=store.find(x=>x.id===id); if(!m)return; curId=id; mName.value=m.name; setPill(m.status); applyData(m.data); renderList(); }
+// modal propio (los diálogos nativos los bloquea el navegador móvil)
+const modal=document.getElementById('modal'), modalMsg=document.getElementById('modalMsg'),
+      modalOk=document.getElementById('modalOk'), modalCancel=document.getElementById('modalCancel');
+let modalRes=null;
+function confirmBox(msg,opt){ opt=opt||{}; return new Promise(res=>{ modalMsg.textContent=msg;
+  modalOk.textContent=opt.okText||'Eliminar'; modalOk.classList.toggle('danger',!opt.onlyOk);
+  modalCancel.style.display=opt.onlyOk?'none':''; modal.classList.add('show'); modalRes=res; }); }
+function closeModal(v){ modal.classList.remove('show'); const r=modalRes; modalRes=null; if(r) r(v); }
+modalOk.onclick=()=>closeModal(true); modalCancel.onclick=()=>closeModal(false);
+modal.onclick=(e)=>{ if(e.target===modal) closeModal(false); };
+
+async function deleteMachote(id){ const m=store.find(x=>x.id===id); if(!m) return;
+  if(m.status==='publicado'){ await confirmBox('«'+m.name+'» está PUBLICADO y no se puede eliminar. Archívalo o publica otro primero.', {onlyOk:true, okText:'Entendido'}); return; }
+  const ok=await confirmBox('¿Eliminar «'+m.name+'» por completo? No se puede deshacer.'); if(!ok) return;
+  store=store.filter(x=>x.id!==id);
+  if(id===curId){ curId=null;
+    const next=store.find(x=>x.status==='publicado')||[...store].sort((a,b)=>b.updatedAt-a.updatedAt)[0];
+    if(next){ curId=next.id; mName.value=next.name; setPill(next.status); applyData(next.data); }
+    else { mName.value='Machote 1'; setPill('borrador'); gDraw.innerHTML=''; pins=[]; renderPins(); deselect(); hist.length=0; } }
+  renderList(); await push(); }
+document.getElementById('mSave').onclick=doSave;
+document.getElementById('mPublish').onclick=doPublish;
+document.getElementById('mArchive').onclick=doArchive;
+document.getElementById('mNew').onclick=doNew;
+document.getElementById('mDelete').onclick=()=>{ if(curId) deleteMachote(curId);
+  else { gDraw.innerHTML=''; pins=[]; renderPins(); deselect(); hist.length=0; mName.value='Machote 1'; setPill('borrador'); } };
+pull();
+</script>
+</body>
+</html>

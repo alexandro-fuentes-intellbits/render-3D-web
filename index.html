@@ -1,0 +1,1860 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Casa Aurora: 54 m² prefabricados que puedes caminar en 3D</title>
+    <meta name="description" content="Aurora es una casa prefabricada de 54 m² con terreno incluido, desde US$ 25,000: dos recámaras, cocina abierta y un gran salón. Camínala en 3D antes de decidir." />
+    <meta name="theme-color" content="#1b1a17" />
+
+    <!-- OpenGraph -->
+    <meta property="og:title" content="Aurora: vive donde nace la luz" />
+    <meta property="og:description" content="Camina Aurora en 3D antes de comprarla. 54 m² con terreno incluido, desde US$ 25,000." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="fotos/ext-aerial-dusk.jpg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+      /* ============ Aurora · sistema de diseño ============ */
+      :root {
+        --cream:   #FBF8F2;
+        --cream-2: #F3ECE0;
+        --sand:    #E8DECE;
+        --ink:     #221F1A;
+        --muted:   #6B6357;
+        --line:    #E2D8C7;
+        --green:   #2F5D46;   /* salvia profunda — eco de plantas y tapetes */
+        --green-d: #234636;
+        --brass:   #B08A4E;   /* latón cálido — eco de los acentos del interior */
+        --brass-ink: #8A6A34; /* latón legible para texto sobre fondos claros (WCAG AA) */
+        --clay:    #C0674A;   /* terracota — pop cálido */
+        --night:   #1B1A17;   /* bandas oscuras */
+        --night-2: #24221D;
+        --shadow:  0 24px 60px -22px rgba(40,30,15,.42);
+        --shadow-s:0 10px 30px -14px rgba(40,30,15,.36);
+        --ease:    cubic-bezier(.22,.72,.28,1);
+        --maxw:    1180px;
+        /* escala tipográfica (una sola fuente de verdad) */
+        --fs-eyebrow: 13px; --fs-ui-s: 14px; --fs-ui: 16px; --fs-lead: 20px;
+        --fs-d1: clamp(40px, 7vw, 84px);        /* h1 hero */
+        --fs-d-panel: clamp(34px, 4.8vw, 68px); /* h2 de panel full-bleed, siempre < h1 */
+        --fs-d2: clamp(30px, 4.4vw, 54px);      /* h2 de sección */
+        --fs-d3: 22px;
+        --lh-display: 1.05; --lh-body: 1.55; --lh-ui: 1.2;
+        --ls-eyebrow: .16em; --ls-display: -0.02em;
+        /* espacio, forma y capas fijas */
+        --sp-section: clamp(56px, 9vh, 110px); --sp-band: clamp(32px, 4vh, 48px);
+        --nav-h: 70px; --overlay-top: calc(var(--nav-h) + 14px + env(safe-area-inset-top));
+        --measure-head: 640px; --measure-text: 65ch;
+        --r-s: 12px; --r-m: 20px; --r-pill: 999px;
+        /* foco accesible (anillo doble sobre foto) */
+        --ring: #1F4433; --ring-dark: #F0DDBB; --ring-core: #17181B;
+        /* WhatsApp accesible: 5.36:1 con blanco (el #1FA855 original da 3.09:1) */
+        --wa: #0F7B3A; --wa-d: #0B6630;
+      }
+
+      * { box-sizing: border-box; }
+      /* NADA de `scroll-behavior: smooth` ni `scroll-snap` aquí, a propósito:
+         - smooth convierte CADA escritura de scroll en una animación del navegador, así que
+           una animación JS (que escribe la posición frame a frame) se anula a sí misma:
+           el resultado son tirones o cero movimiento. Rompe también ScrollToPlugin de GSAP.
+         - snap añade un SEGUNDO controlador del scroll que pelea con la transición.
+         El suavizado de los enlaces internos se hace en JS (ver "enlaces internos"). */
+      html { overflow-x: clip; }
+      body {
+        margin: 0; background: var(--cream); color: var(--ink);
+        font-family: "Instrument Sans", system-ui, -apple-system, sans-serif;
+        font-size: 17px; line-height: var(--lh-body); letter-spacing: -0.006em;
+        -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+        overflow-x: clip;
+      }
+      /* los controles HEREDAN la tipografía de marca (sin esto, todo <button> que no
+         sea .btn cae a Arial del sistema: chips del plano, Ver fotos, Ver el plano…) */
+      button, input, textarea, select, optgroup {
+        font-family: inherit; font-size: inherit; font-weight: inherit;
+        line-height: inherit; letter-spacing: inherit; color: inherit;
+      }
+      button, a, .exp-label { -webkit-tap-highlight-color: transparent; }
+      ::selection { background: rgba(47,93,70,.22); }
+      h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600;
+        line-height: var(--lh-display); letter-spacing: var(--ls-display); margin: 0; }
+      a { color: inherit; text-decoration: none; }
+      img { display: block; max-width: 100%; height: auto; }
+      .wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: 24px; }
+      .eyebrow { font-size: var(--fs-eyebrow); font-weight: 600; letter-spacing: var(--ls-eyebrow);
+        text-transform: uppercase; color: var(--brass-ink); }
+      .serif-i { font-style: italic; font-weight: 400; }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+        overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+      .skip-link { position: fixed; top: 8px; left: 8px; z-index: 100; transform: translateY(-160%);
+        padding: 12px 18px; min-height: 44px; border-radius: var(--r-pill); background: var(--cream);
+        color: var(--ink); font-weight: 600; box-shadow: var(--shadow-s);
+        transition: transform .2s var(--ease); }
+      .skip-link:focus-visible { transform: none; }
+
+      /* ---- botones ---- */
+      .btn { display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+        font-family: inherit; font-size: var(--fs-ui); font-weight: 600;
+        line-height: 1; min-height: 44px; white-space: nowrap;
+        padding: 14px 24px; border-radius: var(--r-pill); border: 1px solid transparent;
+        transition: transform .22s var(--ease), background .22s var(--ease), box-shadow .22s var(--ease), color .22s var(--ease); }
+      .btn:active { transform: translateY(1px) scale(.98); }
+      .btn-primary { background: var(--green); color: #F7F3EA; box-shadow: var(--shadow-s); }
+      .btn-primary:hover { background: var(--green-d); transform: translateY(-2px); box-shadow: var(--shadow); }
+      .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+      .btn-ghost:hover { background: #fff; border-color: var(--brass); transform: translateY(-2px); }
+      .btn-wa { background: var(--wa); color: #fff; }
+      .btn-wa:hover { background: var(--wa-d); transform: translateY(-2px); box-shadow: var(--shadow-s); }
+      .btn svg { width: 18px; height: 18px; }
+
+      /* ---- sistema de foco (visible, de marca; anillo doble sobre foto/video) ---- */
+      a:focus, button:focus, input:focus, textarea:focus { outline: none; }
+      a:focus-visible, button:focus-visible {
+        outline: 3px solid var(--ring); outline-offset: 3px; border-radius: inherit; }
+      .btn-primary:focus-visible, .btn-wa:focus-visible, .wa-float:focus-visible,
+      .story-skip:focus-visible, .story-map:focus-visible { outline-color: var(--ring-dark); }
+      .hero-expand:focus-visible, .story-arrow:focus-visible, .exp-label:focus-visible,
+      .lb-close:focus-visible, .lb-nav:focus-visible,
+      .nav:not(.scrolled) a:focus-visible, .nav:not(.scrolled) .btn:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--ring-core), 0 0 0 5px var(--ring-dark); }
+
+      /* ---- nav ---- */
+      header.nav { position: fixed; inset: 0 0 auto 0; z-index: 40; isolation: isolate;
+        padding-top: env(safe-area-inset-top);
+        transition: background .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease);
+        border-bottom: 1px solid transparent; }
+      /* scrim sobre el video del hero: sin él, el wordmark blanco da 2.55:1 en frames de día */
+      .nav:not(.scrolled)::before { content: ""; position: absolute; inset: 0; z-index: -1;
+        pointer-events: none;
+        background: linear-gradient(180deg, rgba(12,13,15,.62) 0%, rgba(12,13,15,.34) 62%, rgba(12,13,15,0) 100%); }
+      header.nav.scrolled { background: rgba(251,248,242,.82);
+        backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2);
+        border-bottom-color: var(--line); }
+      .nav-in { display: flex; align-items: center; justify-content: space-between; height: var(--nav-h); }
+      .brand { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: 24px; letter-spacing: .01em;
+        display: inline-flex; align-items: center; min-height: 44px; line-height: 1; }
+      .brand b { color: var(--green); font-weight: 600; }
+      .brand .dot { color: var(--brass); }
+      .nav:not(.scrolled) .brand .dot { color: var(--ring-dark); }
+      .nav-links { display: flex; align-items: center; gap: 30px; }
+      .nav-links a.lnk { font-size: var(--fs-ui); font-weight: 500; color: var(--muted);
+        transition: color .2s var(--ease); }
+      .nav-links a.lnk:hover { color: var(--ink); }
+      .nav-cta { display: flex; align-items: center; gap: 12px; }
+      /* hamburguesa (solo móvil) */
+      .nav-burger { display: none; width: 44px; height: 44px; padding: 0; border: 0; cursor: pointer;
+        background: transparent; border-radius: var(--r-pill);
+        flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+      .nav-burger span { display: block; width: 20px; height: 2px; border-radius: 2px;
+        background: var(--ink); transition: transform .25s var(--ease), opacity .2s var(--ease); }
+      .nav:not(.scrolled) .nav-burger span { background: #fff; }
+      body.menu-open .nav-burger span { background: var(--ink); }
+      body.menu-open .nav-burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      body.menu-open .nav-burger span:nth-child(2) { opacity: 0; }
+      body.menu-open .nav-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+      /* overlay del menú */
+      .nav-menu { position: fixed; inset: 0; z-index: 39; background: rgba(251,248,242,.98);
+        -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+        opacity: 0; pointer-events: none; visibility: hidden;
+        transition: opacity .3s var(--ease), visibility .3s var(--ease); }
+      body.menu-open .nav-menu { opacity: 1; pointer-events: auto; visibility: visible; }
+      body.menu-open { overflow: hidden; }
+      body.menu-open header.nav::before { opacity: 0; }
+      body.menu-open .nav:not(.scrolled) .brand, body.menu-open .nav:not(.scrolled) .brand b { color: var(--ink); text-shadow: none; }
+      body.menu-open .nav:not(.scrolled) .brand .dot { color: var(--brass); }
+      .nav-menu-in { height: 100%; display: flex; flex-direction: column; justify-content: center;
+        gap: 6px; padding: 0 28px calc(env(safe-area-inset-bottom)); max-width: var(--maxw); margin: 0 auto; }
+      .nm-lnk { font-family: "Fraunces", Georgia, serif; font-weight: 600;
+        font-size: clamp(28px, 7vw, 40px); color: var(--ink); padding: 8px 0; line-height: 1.15;
+        opacity: 0; transform: translateY(14px);
+        transition: opacity .4s var(--ease), transform .4s var(--ease); }
+      body.menu-open .nm-lnk { opacity: 1; transform: none; }
+      body.menu-open .nm-lnk:nth-child(1) { transition-delay: .05s; }
+      body.menu-open .nm-lnk:nth-child(2) { transition-delay: .1s; }
+      body.menu-open .nm-lnk:nth-child(3) { transition-delay: .15s; }
+      body.menu-open .nm-lnk:nth-child(4) { transition-delay: .2s; }
+      body.menu-open .nm-lnk:nth-child(5) { transition-delay: .25s; }
+      body.menu-open .nm-lnk:nth-child(6) { transition-delay: .3s; }
+      .nm-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px;
+        opacity: 0; transform: translateY(14px); transition: opacity .4s var(--ease) .36s, transform .4s var(--ease) .36s; }
+      body.menu-open .nm-ctas { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .nm-lnk, .nm-ctas { transition-delay: 0s !important; transform: none; }
+      }
+      @media (max-width: 860px) {
+        .nav-links { display: none; }
+        .nav-burger { display: flex; }
+        .nav-in { height: 60px; }
+        .brand { font-size: 21px; }
+        .nav-cta { gap: 8px; }
+        .nav-cta .btn { flex: none; padding: 10px 16px; font-size: var(--fs-ui-s); }
+        .nav-cta .btn svg { width: 16px; height: 16px; }
+        .nav-cta .btn-ghost { display: none; }   /* vive en el menú */
+      }
+      @media (max-width: 480px) { .nav-cta .btn-primary { display: none; } }   /* <480: burger + brand; CTA en el menú */
+
+      /* ---- hero (image-first, full-bleed) ---- */
+      .hero { position: relative; height: 100svh; min-height: 600px; max-height: 940px; overflow: hidden; background: #14161a; }
+      .hero-slider { position: absolute; inset: 0; }
+      /* hero video: loop sin corte horneado (disolvencia noche→día dentro del archivo) */
+      .hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; background: #14161a; }
+      .hero-video--desktop { display: none; }
+      @media (min-width: 821px) {
+        .hero-video--mobile { display: none; }
+        .hero-video--desktop { display: block; }
+      }
+      /* video es el hero: ocultamos el slider de fotos y los puntos (las fotos quedan en el DOM para el lightbox) */
+      .hero-slider .frame, .hero-slider .hero-thumbs { display: none !important; }
+      .hero-slider .frame { position: absolute; inset: 0; overflow: hidden; }
+      .hero-track { display: flex; width: 100%; height: 100%;
+        transition: transform .7s var(--ease); will-change: transform; }
+      .hero-track img { flex: 0 0 100%; width: 100%; height: 100%; object-fit: cover;
+        display: block; user-select: none; -webkit-user-drag: none; }
+      /* scrim: legibilidad del texto sobre la foto */
+      .hero-scrim { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+        background:
+          linear-gradient(180deg, rgba(12,13,15,.42) 0%, rgba(12,13,15,0) 22%, rgba(12,13,15,0) 42%, rgba(12,13,15,.66) 100%),
+          linear-gradient(90deg, rgba(12,13,15,.42) 0%, rgba(12,13,15,0) 60%); }
+      .hero-overlay { position: absolute; z-index: 2; left: 0; right: 0; bottom: clamp(36px, 6vh, 84px); }
+      .hero-overlay h1 { font-size: var(--fs-d1); margin: 0; color: #fff; text-shadow: 0 2px 34px rgba(0,0,0,.4); }
+      .hero-overlay h1 .lit { color: #c9e6d2; }
+      .hero-overlay .lead { font-size: clamp(16px, 1.55vw, 19px); color: rgba(255,255,255,.92);
+        max-width: 42ch; margin: 16px 0 0; text-shadow: 0 1px 18px rgba(0,0,0,.45); }
+      /* precio en el hero: el de lista tachado + badge de oferta + contador que CAE */
+      .hero-price { margin: 16px 0 0; color: #fff; text-shadow: 0 2px 24px rgba(0,0,0,.45); }
+      .hero-price p { margin: 0; }
+      /* etiqueta mini flotando ARRIBA A LA DERECHA del 25,000 */
+      .hp-num { position: relative; display: inline-flex; align-items: baseline; gap: 8px; }
+      .hp-tag { position: absolute; bottom: calc(100% + 2px); right: 0;
+        display: inline-flex; align-items: center; padding: 2px 7px; border-radius: var(--r-pill);
+        background: var(--green); color: #F7F3EA; font-size: 8.5px; font-weight: 700;
+        letter-spacing: .06em; text-transform: uppercase; text-shadow: none; white-space: nowrap;
+        overflow: hidden; }
+      /* reflejo "sol sobre metal": franja diagonal que barre el badge de izquierda a derecha */
+      .hp-shine { position: absolute; top: -30%; bottom: -30%; left: 0; width: 55%;
+        transform: translateX(-180%) skewX(-20deg); pointer-events: none;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent); }
+      .hp-main { display: flex; align-items: baseline; gap: 10px; margin-top: 20px !important; }
+      /* precio de lista tachado en la MISMA línea, separado por una barra */
+      .hp-old { font-size: clamp(15px, 1.6vw, 20px); font-weight: 600; color: rgba(255,255,255,.72);
+        text-decoration-thickness: 2px; text-decoration-color: var(--clay);
+        border-left: 1px solid rgba(255,255,255,.38); padding-left: 12px; margin-left: 2px; }
+      .hp-below { margin-top: 8px !important; font-size: var(--fs-ui-s); font-weight: 600;
+        color: rgba(255,255,255,.88); }
+      .hp-cur { font-size: clamp(16px, 1.6vw, 22px); font-weight: 600; color: #ecdfc6; }
+      #heroPrice { font-family: "Fraunces", Georgia, serif; font-weight: 600;
+        font-size: clamp(38px, 4.6vw, 62px); line-height: 1; letter-spacing: -0.01em;
+        font-variant-numeric: tabular-nums; min-width: 4.2ch; }
+      .hero-cta { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+      /* "Ver fotos" vive en el grupo de CTAs (antes flotaba arriba-derecha, bajo el nav) */
+      .hero-cta .hero-expand { position: static; }
+      .hero-link { color: #fff; font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 6px;
+        opacity: .92; transition: gap .2s var(--ease), opacity .2s var(--ease); }
+      .hero-link:hover { gap: 11px; opacity: 1; }
+      .hero-link svg { width: 16px; height: 16px; }
+      .hero-arrow { position: absolute; z-index: 3; top: 50%; transform: translateY(-50%);
+        width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3);
+        background: rgba(20,20,18,.3); color: #fff; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        display: grid; place-items: center; cursor: pointer; padding: 0; transition: background .2s var(--ease); }
+      .hero-arrow:hover { background: rgba(20,20,18,.6); }
+      .hero-arrow.prev { left: 18px; } .hero-arrow.next { right: 18px; }
+      .hero-arrow svg { width: 22px; height: 22px; }
+      .hero-arrow { display: none; }   /* diluir: sin flechas laterales (navega con puntos + swipe) */
+      .hero-thumbs { position: absolute; z-index: 3; left: 0; right: 0; bottom: 26px; margin: 0 auto; width: max-content; max-width: 92vw;
+        display: flex; gap: 9px; align-items: center; justify-content: center; }
+      .hero-thumb { flex: 0 0 auto; width: 8px; height: 8px; padding: 0; cursor: pointer; border: 0; border-radius: 999px;
+        background: rgba(255,255,255,.45); transition: width .25s var(--ease), background .25s var(--ease); }
+      .hero-thumb img { display: none; }   /* puntos, no imágenes */
+      .hero-thumb:hover { background: rgba(255,255,255,.75); }
+      .hero-thumb.active { width: 24px; background: #fff; }
+      /* nav sobre el hero: texto blanco arriba, sólido al bajar */
+      .nav:not(.scrolled) .brand, .nav:not(.scrolled) .brand b { color: #fff; text-shadow: 0 1px 12px rgba(0,0,0,.45); }
+      .nav:not(.scrolled) .nav-links a.lnk { color: rgba(255,255,255,.85); }
+      .nav:not(.scrolled) .nav-links a.lnk:hover { color: #fff; }
+      .nav:not(.scrolled) .nav-cta .btn-ghost { color: #fff; border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.08); }
+      .nav:not(.scrolled) .nav-cta .btn-ghost:hover { background: rgba(255,255,255,.18); }
+
+      @media (max-width: 560px) {
+        .hero { min-height: 560px; }
+        .hero-overlay { bottom: clamp(84px, 15vh, 132px); }
+      }
+
+      /* ---- ficha técnica (patrón del sector: specs inmediatas tras el hero) ---- */
+      .specs { border-block: 1px solid var(--line); background: var(--cream-2); }
+      .specs-in { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 28px 0; }
+      .spec { text-align: center; padding: 8px 12px; border-right: 1px solid var(--line); }
+      .spec:last-child { border-right: 0; }
+      .spec b { font-family: "Fraunces", Georgia, serif; font-size: clamp(22px, 2.4vw, 30px);
+        font-weight: 600; display: block; line-height: 1.15; }
+      .spec span { font-size: var(--fs-ui-s); color: var(--muted); }
+      @media (max-width: 760px) {
+        .specs-in { grid-template-columns: 1fr 1fr; gap: 20px 8px; }
+        .spec:nth-child(2n) { border-right: 0; }
+      }
+
+      /* banda de aviso legal */
+      .disclaimer { background: var(--cream-2); border-top: 1px solid var(--line); }
+      .disclaimer-in { display: flex; gap: 16px; align-items: flex-start; padding: var(--sp-band) 0; }
+      .disclaimer .di-ic { flex: none; width: 38px; height: 38px; border-radius: var(--r-s); background: #fff;
+        border: 1px solid var(--line); display: grid; place-items: center; color: var(--brass); }
+      .disclaimer .di-ic svg { width: 20px; height: 20px; }
+      .disclaimer p { margin: 0; font-size: 16px; color: var(--muted); line-height: var(--lh-body); max-width: var(--measure-text); }
+      .disclaimer p b { color: var(--ink); font-weight: 600; }
+
+
+      /* ---- el terreno: aérea a pantalla completa + panel de datos a la derecha ---- */
+      .land { background: var(--cream-2); border-block: 1px solid var(--line); }
+      .land-in { min-height: 100svh; display: grid; grid-template-columns: 1.6fr 1fr;
+        align-items: center; gap: clamp(24px, 3vw, 48px);
+        max-width: var(--maxw); margin: 0 auto; padding: clamp(72px, 10vh, 110px) 24px; }
+      .land-fig-air { position: relative; margin: 0; }
+      .land-fig-air img { width: 100%; height: auto; border-radius: var(--r-m);
+        box-shadow: var(--shadow); border: 1px solid var(--line); }
+      .land-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+      /* non-scaling-stroke: el trazo mantiene su grosor real en pantalla (sin él, el
+         viewBox de 1152 lo reducía a <1px y las cotas desaparecían en móvil).
+         Trazo oscuro + halo blanco (drop-shadow) = legible sobre pasto y calle. */
+      .land-svg .bl { fill: none; stroke: #17181B; stroke-width: 4; stroke-linecap: round;
+        stroke-dasharray: 30 22; opacity: 0; vector-effect: non-scaling-stroke;
+        filter: drop-shadow(0 0 2px rgba(255,255,255,.95)) drop-shadow(0 0 5px rgba(255,255,255,.7)); }
+      .land-svg .bd { stroke: #17181B; stroke-width: 4; stroke-dasharray: 30 22; }
+      @keyframes landFlow { to { stroke-dashoffset: -52; } }
+      .land-svg .bl.flow { animation: landFlow 1s linear infinite; }
+      .land-dim--w { left: 46%; bottom: -3.5%; }
+      .land-dim--h { left: -2%; top: 44%; }
+      .land h2 { font-size: clamp(28px, 2.6vw, 40px); }
+      .land-sub { font-size: clamp(16px, 1.5vw, 18px); color: var(--muted); line-height: var(--lh-body); margin: 14px 0 0; }
+      /* la cuenta del lote: casa + terreno libre = total (se lee como una suma) */
+      .land-sum { margin-top: clamp(24px, 3.5vh, 36px); }
+      .ls-row { display: grid; grid-template-columns: 22px auto 1fr; align-items: baseline; gap: 10px;
+        padding: 10px 0; }
+      .ls-op { font-family: "Fraunces", Georgia, serif; font-size: 22px; font-weight: 600; color: var(--brass-ink);
+        text-align: center; }
+      .ls-row b { font-family: "Fraunces", Georgia, serif; font-size: clamp(24px, 2.4vw, 32px); font-weight: 600;
+        line-height: 1.1; font-variant-numeric: tabular-nums; }
+      .ls-lbl { font-size: var(--fs-ui-s); color: var(--muted); }
+      .ls-total { border-top: 2px solid var(--green); margin-top: 4px; padding-top: 14px; }
+      .ls-total b { color: var(--green); }
+      .land-perks { list-style: none; margin: clamp(20px, 3vh, 30px) 0 0; padding: 0; display: grid; gap: 10px; }
+      .land-perks li { position: relative; padding-left: 26px; font-size: 16px; color: var(--ink); line-height: var(--lh-body); }
+      .land-perks li::before { content: ""; position: absolute; left: 0; top: .5em; width: 14px; height: 2px;
+        border-radius: 2px; background: var(--green); }
+      .land-note { margin: clamp(18px, 2.5vh, 26px) 0 0; font-size: var(--fs-ui-s); color: var(--muted);
+        line-height: var(--lh-body); border-left: 2px solid var(--brass); padding-left: 12px; }
+      .land-note b { color: var(--ink); }
+      .land-note a { text-decoration: underline; text-underline-offset: 3px; }
+      @media (max-width: 900px) {
+        .land-in { grid-template-columns: 1fr; align-items: start;
+          padding: calc(var(--nav-h) + 20px + env(safe-area-inset-top)) 24px 40px; gap: 26px; }
+        .land-dim--w { bottom: -5%; }
+      }
+
+      /* ---- ubicación (mapa tintado a la paleta) ---- */
+      .loc { background: #fff; border-block: 1px solid var(--line); padding: var(--sp-section) 0; }
+      .loc h2 { font-size: var(--fs-d2); max-width: var(--measure-head); }
+      .loc-sub { font-size: clamp(16px, 1.5vw, 18px); color: var(--muted); line-height: var(--lh-body);
+        max-width: var(--measure-text); margin: 14px 0 0; }
+      .loc-map { height: clamp(320px, 52vh, 460px); margin-top: clamp(24px, 4vh, 36px);
+        border-radius: var(--r-m); overflow: hidden; box-shadow: var(--shadow-s);
+        border: 1px solid var(--line); background: var(--cream-2); position: relative; z-index: 0; }
+      /* tinte de marca sobre los tiles claros: gris → salvia/cream */
+      .loc-map .leaflet-tile-pane { filter: sepia(.32) hue-rotate(52deg) saturate(.72) brightness(1.03); }
+      .loc-map .leaflet-control-attribution { font-size: 10px; background: rgba(251,248,242,.85); color: var(--muted); }
+      /* pin de marca: gota verde con punto latón y pulso suave */
+      .loc-pin span { display: block; width: 34px; height: 34px; background: var(--green);
+        border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+        box-shadow: 0 10px 24px -8px rgba(27,26,23,.5); position: relative; }
+      .loc-pin span::before { content: ""; position: absolute; inset: 0; margin: auto;
+        width: 10px; height: 10px; border-radius: 50%; background: var(--brass); }
+      .loc-pin span::after { content: ""; position: absolute; inset: -12px; border-radius: 50%;
+        border: 2px solid rgba(47,93,70,.45); animation: locPulse 2.2s ease-out infinite; }
+      @keyframes locPulse { 0% { transform: scale(.6); opacity: 1; } 100% { transform: scale(1.25); opacity: 0; } }
+      @media (prefers-reduced-motion: reduce) { .loc-pin span::after { animation: none; opacity: 0; } }
+      .loc-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 20px; }
+      .loc-recenter { position: absolute; right: 12px; bottom: 12px; z-index: 500;
+        width: 44px; height: 44px; border-radius: var(--r-pill); border: 1px solid var(--line);
+        background: rgba(251,248,242,.95); color: var(--green); display: grid; place-items: center;
+        cursor: pointer; box-shadow: var(--shadow-s); opacity: 0; pointer-events: none;
+        transition: opacity .25s var(--ease), transform .15s var(--ease); }
+      .loc-recenter.show { opacity: 1; pointer-events: auto; }
+      .loc-recenter:active { transform: scale(.93); }
+      .loc-recenter svg { width: 20px; height: 20px; }
+      .loc-lake { display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+        padding: 0 16px; border-radius: var(--r-pill); background: rgba(47,93,70,.08);
+        border: 1px solid rgba(47,93,70,.18); color: var(--green); font-size: var(--fs-ui-s); font-weight: 600; }
+      .loc-lake svg { width: 18px; height: 18px; flex: none; }
+
+      /* ---- la estructura (3 contenedores) ---- */
+      .build { background: var(--cream); padding: var(--sp-section) 0; }
+      .build h2 { font-size: var(--fs-d2); max-width: var(--measure-head); }
+      .build-sub { font-size: clamp(16px, 1.5vw, 18px); color: var(--muted); line-height: var(--lh-body);
+        max-width: var(--measure-text); margin: 14px 0 0; }
+      /* figura técnica: render + wireframe punteado + cotas */
+      .build-fig { position: relative; margin: clamp(28px, 4vh, 44px) auto 0; max-width: 860px;
+        border-radius: var(--r-m); overflow: hidden; background: #fff;
+        border: 1px solid var(--line); box-shadow: var(--shadow-s); }
+      .build-fig img { width: 100%; height: auto; display: block; }
+      .build-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+      .build-svg .bl { fill: none; stroke: var(--green); stroke-width: 2.4; stroke-linecap: round;
+        stroke-dasharray: 7 8; opacity: 0; vector-effect: non-scaling-stroke; }
+      .build-svg .bd { stroke: var(--brass-ink); stroke-width: 2; stroke-dasharray: 5 10; }
+      /* tras dibujarse, los puntos SIGUEN AVANZANDO por la línea (marching ants) */
+      @keyframes blFlow { to { stroke-dashoffset: -15; } }
+      .build-svg .bl.flow { animation: blFlow 1.1s linear infinite; }
+      .build-svg .bd.flow { animation-duration: 1.4s; }
+      @media (prefers-reduced-motion: reduce) { .build-svg .bl.flow { animation: none; } }
+      .build-dim { position: absolute; font-family: "Fraunces", Georgia, serif; font-weight: 600;
+        font-size: clamp(14px, 2.2vw, 21px); color: var(--ink); background: rgba(255,255,255,.9);
+        padding: 3px 10px; border-radius: var(--r-pill); border: 1px solid var(--line);
+        opacity: 0; transform: translateY(6px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+      .build-dim.on { opacity: 1; transform: none; }
+      .build-dim--l { left: 58%; bottom: 8%; }
+      .build-dim--h { right: 1.5%; top: 44%; }
+      .build-dim--d { left: 14%; bottom: 3.5%; }
+      /* specs digeridas: fichas con borde superior, alineadas a la izquierda y con aire */
+      .build-specs { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(18px, 2.5vw, 32px);
+        margin-top: clamp(24px, 3.5vh, 36px); }
+      .bs { border-top: 2px solid var(--green); padding-top: 14px; }
+      .bs b { font-family: "Fraunces", Georgia, serif; font-weight: 600; font-size: clamp(18px, 1.9vw, 22px);
+        display: block; line-height: 1.25; }
+      .bs span { display: block; margin-top: 4px; font-size: var(--fs-ui-s); color: var(--muted); line-height: 1.45; }
+      @media (max-width: 760px) {
+        .build-specs { grid-template-columns: 1fr 1fr; gap: 22px 18px; }
+      }
+      @media (max-width: 420px) {
+        .build-specs { grid-template-columns: 1fr; gap: 18px; }
+      }
+
+      /* ---- footer ---- */
+      footer { background: var(--night); color: #9C9484; border-top: 1px solid rgba(255,255,255,.08); }
+      .foot-in { display: flex; align-items: center; justify-content: space-between; gap: 20px;
+        padding: 34px 0; flex-wrap: wrap; }
+      footer .brand { color: #F1EBDF; font-size: 22px; }
+      footer .brand b { color: #6FBF95; }
+      footer small { font-size: var(--fs-ui-s); }
+      footer a.f-lnk { color: #B7AF9F; font-size: var(--fs-ui-s); min-height: 44px; display: inline-flex; align-items: center; }
+      footer a.f-lnk:hover { color: #F1EBDF; }
+      .foot-links { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+
+      /* ---- whatsapp flotante ---- */
+      .wa-float { position: fixed; right: calc(20px + env(safe-area-inset-right)); bottom: calc(20px + env(safe-area-inset-bottom)); z-index: 45;
+        width: 58px; height: 58px; border-radius: 50%; background: var(--wa); color: #fff;
+        display: grid; place-items: center; box-shadow: 0 14px 34px -10px rgba(15,123,58,.55);
+        transition: transform .25s var(--ease), box-shadow .25s var(--ease), opacity .3s var(--ease); }
+      .wa-float:hover { transform: scale(1.08) translateY(-2px); box-shadow: 0 18px 44px -10px rgba(15,123,58,.65); }
+      .wa-float:active { transform: scale(.93); }
+      .wa-float svg { width: 30px; height: 30px; }
+      /* durante el recorrido el flotante se retira: solapaba "Saltar recorrido" (35px a 375w) */
+      body.story-active .wa-float { opacity: 0; pointer-events: none; transform: scale(.9); }
+
+      section[id], div[id].disclaimer { scroll-margin-top: calc(var(--nav-h) + 10px + env(safe-area-inset-top)); }
+      /* ---- lightbox (visor de fotos, sin texto) ---- */
+      body.lb-open { overflow: hidden; }
+      .lightbox { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center;
+        background: rgba(8,9,11,.93); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        opacity: 0; transition: opacity .3s var(--ease); }
+      .lightbox.open { display: flex; }
+      .lightbox.vis { opacity: 1; }
+      .lb-stage { display: flex; align-items: center; justify-content: center; padding: 0 12px; }
+      .lb-img { max-width: 94vw; max-height: 78svh; touch-action: pinch-zoom; width: auto; height: auto; object-fit: contain; border-radius: 10px;
+        box-shadow: 0 40px 120px -30px rgba(0,0,0,.8); transform: scale(.985);
+        transition: transform .3s var(--ease); user-select: none; -webkit-user-drag: none; }
+      .lightbox.vis .lb-img { transform: scale(1); }
+      .lb-close { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: calc(12px + env(safe-area-inset-right)); z-index: 2; width: 46px; height: 46px; border-radius: 50%;
+        border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); color: #fff; display: grid; place-items: center;
+        cursor: pointer; padding: 0; transition: background .2s var(--ease), transform .3s var(--ease); }
+      .lb-close:hover { background: rgba(255,255,255,.18); transform: rotate(90deg); }
+      .lb-close svg { width: 22px; height: 22px; }
+      .lb-nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 54px; height: 54px; border-radius: 50%;
+        border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); color: #fff; display: grid; place-items: center;
+        cursor: pointer; padding: 0; transition: background .2s var(--ease); }
+      .lb-nav:hover { background: rgba(255,255,255,.2); }
+      .lb-nav.prev { left: 20px; } .lb-nav.next { right: 20px; }
+      .lb-nav svg { width: 26px; height: 26px; }
+      .lb-count { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 2; color: rgba(255,255,255,.88);
+        font-size: 13px; letter-spacing: .12em; font-variant-numeric: tabular-nums; background: rgba(0,0,0,.4); padding: 6px 14px; border-radius: 999px; }
+      @media (max-width: 640px) {
+        .lb-nav { width: 48px; height: 48px; top: auto; bottom: calc(20px + env(safe-area-inset-bottom)); transform: none; }
+        .lb-nav.prev { left: calc(50% - 72px); } .lb-nav.next { right: calc(50% - 72px); }
+        .lb-count { bottom: calc(82px + env(safe-area-inset-bottom)); }
+        .lb-img { max-height: calc(100svh - 200px); }
+      }
+      /* botón "Ver fotos" en el hero */
+      .hero-expand { display: inline-flex; align-items: center; gap: 8px;
+        min-height: 44px; line-height: 1; padding: 0 18px; border-radius: var(--r-pill);
+        border: 1px solid rgba(255,255,255,.36); background: rgba(10,11,13,.6);
+        color: #fff; font-size: var(--fs-ui-s); font-weight: 600; cursor: pointer;
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        transition: background .2s var(--ease), transform .2s var(--ease); }
+      .hero-expand:hover { background: rgba(10,11,13,.8); transform: translateY(-1px); }
+      .hero-expand:active { transform: scale(.96); }
+      .hero-expand svg { width: 16px; height: 16px; }
+
+      /* ---- reveal ---- */
+      .reveal { opacity: 0; transform: translateY(14px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+      .reveal.in { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; scroll-behavior: auto !important; }
+        .reveal { opacity: 1; transform: none; transition: none; }
+      }
+
+      /* hero se "encoge" al salir hacia la distribución (--hs 0→1 por scroll) */
+      .hero { --hs: 0; }
+      .hero-slider { transform: scale(calc(1 - .07 * var(--hs))); transform-origin: center 42%; border-radius: calc(var(--hs) * 26px); overflow: hidden; }
+      .hero-overlay { opacity: calc(1 - .9 * var(--hs)); }
+      @media (prefers-reduced-motion: reduce) { .hero-slider { transform: none; border-radius: 0; } .hero-overlay { opacity: 1; } }
+
+      /* ---- DISTRIBUCIÓN (diagrama: imagen flotando + etiquetas alrededor, líneas quebradas) ---- */
+      /* riel alto: al scrollear la sección se FIJA a pantalla completa y enfoca SOLO esto (desktop y móvil) */
+      .exp { position: relative; background: #fff; height: 165svh; --focus: 1; }
+      .exp-stage { position: sticky; top: 0; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: clamp(16px, 3.5vh, 40px) 0; }
+      .exp-head { text-align: center; max-width: var(--measure-head); margin: 0 auto clamp(24px, 3.5vh, 40px);
+        opacity: var(--focus); transform: translateY(calc((1 - var(--focus)) * 14px)); }
+      .exp-head .eyebrow { color: var(--brass-ink); }
+      .exp-head h2 { font-size: var(--fs-d2); margin: 12px 0 0; color: #1b1a17; }
+      .exp-head p { font-size: clamp(16px, 1.5vw, 18px); color: #5b574e; margin: 12px 0 0; line-height: var(--lh-body); }
+
+      /* box del diagrama: imagen al centro; canales laterales para etiquetas (aprovechan el margen blanco del render) */
+      .exp-diagram { position: relative; width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(70px, 11vw, 200px);
+        transform: scale(calc(.86 + .14 * var(--focus))); opacity: calc(.35 + .65 * var(--focus)); transform-origin: center; }
+
+      /* imagen FLOTANDO: sin tarjeta (mismo blanco que el fondo del render) */
+      .exp-figure { position: relative; margin: 0; }
+      .exp-figure img { display: block; width: 100%; height: auto; }
+
+      .exp-dots { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+      .exp-dot { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; opacity: 0; border-radius: 999px;
+        background: rgba(255,255,255,.92); border: 2px solid #2F5D46; box-shadow: 0 2px 8px rgba(0,0,0,.35);
+        transition: background .2s var(--ease), border-color .2s var(--ease), width .2s var(--ease), height .2s var(--ease); }
+      .exp-dot::after { content: ""; position: absolute; inset: -6px; border-radius: 999px; border: 1.5px solid rgba(47,93,70,.5); opacity: 0; transition: opacity .3s; }
+      .exp-dot.on { background: #B08A4E; border-color: #fff; width: 18px; height: 18px; }
+      .exp-dot.on::after { opacity: 1; animation: expPulse 1.8s ease-out 2; }
+      @keyframes expPulse { 0% { transform: scale(.7); opacity: .7; } 100% { transform: scale(1.7); opacity: 0; } }
+
+      /* etiquetas alrededor (chip SIEMPRE por encima de la línea) */
+      .exp-labels, .exp-labels--top { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+      .exp-label { position: absolute; pointer-events: auto; opacity: 0; white-space: nowrap; display: inline-flex; align-items: center; gap: 8px;
+        -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
+        min-height: 44px; line-height: 1; padding: 0 16px; border-radius: var(--r-pill); border: 1px solid rgba(27,26,23,.10); background: rgba(255,255,255,.92);
+        color: #2a2822; font-size: var(--fs-ui-s); font-weight: 600; cursor: pointer; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+        box-shadow: 0 8px 22px -10px rgba(27,26,23,.35); transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease); }
+      /* punto palpitante que invita a tocar */
+      .exp-lb-dot { position: relative; width: 8px; height: 8px; border-radius: 999px; background: var(--green); flex: 0 0 auto; }
+      .exp-lb-dot::after { content: ""; position: absolute; inset: 0; border-radius: 999px; background: var(--green); animation: expPing 1.9s ease-out infinite; }
+      @keyframes expPing { 0% { box-shadow: 0 0 0 0 rgba(47,93,70,.5); } 70% { box-shadow: 0 0 0 7px rgba(47,93,70,0); } 100% { box-shadow: 0 0 0 0 rgba(47,93,70,0); } }
+      @media (hover: hover) { .exp-label:hover { transform: translateY(-1px); box-shadow: 0 12px 26px -10px rgba(27,26,23,.45); } }
+      .exp-label.on { background: var(--green); color: #fff; border-color: var(--green); box-shadow: 0 12px 28px -10px rgba(47,93,70,.6); }
+      .exp-label.on .exp-lb-dot { background: var(--brass); }
+      .exp-label.on .exp-lb-dot::after { background: var(--brass); animation: expPingGold 1.9s ease-out infinite; }
+      @keyframes expPingGold { 0% { box-shadow: 0 0 0 0 rgba(176,138,78,.6); } 70% { box-shadow: 0 0 0 8px rgba(176,138,78,0); } 100% { box-shadow: 0 0 0 0 rgba(176,138,78,0); } }
+      .exp-label[data-side="left"]  { left: 0;  transform: translateY(-50%); }
+      .exp-label[data-side="right"] { right: 0; transform: translateY(-50%); }
+      .exp-label[data-side="bottom"] { left: 50%; bottom: 0; transform: translate(-50%, 130%); }
+
+      /* líneas QUEBRADAS (codo) que rodean la imagen */
+      .exp-hint { display: none; margin: 14px 0 0; text-align: center; font-size: var(--fs-ui-s); color: #5b574e; }
+      .exp-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; overflow: visible; }
+      .exp-svg polyline { fill: none; stroke: rgba(47,93,70,.62); stroke-width: 2; stroke-linecap: round;
+        stroke-linejoin: round; opacity: 0; transition: stroke-width .25s, stroke .25s; }
+      .exp-svg polyline.on { stroke: var(--green); stroke-width: 2.6; }
+
+      @media (max-width: 820px) {
+        /* móvil: a 375px los canales laterales no existen (33px) y los chips flotantes
+           se montaban sobre un plano de 264px — aquí el plano va GRANDE y los chips
+           pasan a una leyenda táctil (44px) envuelta debajo, mismo click → misma zona */
+        .exp { height: 100svh; }
+        .exp-stage { padding: 0; }
+        /* el focus-scale del diagrama NO debe encoger la leyenda táctil (44px reales):
+           en móvil el scale y el fade viven solo en la figura */
+        .exp-diagram { padding: 0 12px; transform: none; opacity: 1; }
+        .exp-figure { transform: scale(calc(.94 + .06 * var(--focus))); transform-origin: 50% 100%;
+          opacity: calc(.35 + .65 * var(--focus)); }
+        /* chips ALREDEDOR del plano: fila arriba (zonas altas) y fila abajo (zonas
+           bajas). Sin líneas en móvil: al presionar un chip se enciende su punto. */
+        .exp-svg { display: none; }
+        .exp-labels, .exp-labels--top { position: static; inset: auto; display: flex; flex-wrap: wrap;
+          gap: 8px; justify-content: center; }
+        .exp-labels--top { margin-bottom: 14px; }
+        .exp-labels { margin-top: 14px; }
+        .exp-hint { display: block; }
+        .exp-label, .exp-label[data-side] { position: static; inset: auto; transform: none;
+          font-size: 13px; padding: 0 14px; min-height: 44px; }
+        .exp-head { margin-bottom: clamp(16px, 3vh, 28px); }
+        .exp-dot { width: 18px; height: 18px; margin: -9px 0 0 -9px; }
+        .exp-dot.on { width: 22px; height: 22px; }
+      }
+      @media (prefers-reduced-motion: reduce) { .exp-dot.on::after { animation: none; } }
+
+      /* ---- RECORRIDO (slides NATIVAS con scroll-snap: cada zona es una sección
+             independiente de 100svh en el flujo; el navegador hace el snap — sin
+             secuestrar el scroll con JS, sin locks, sin estancamiento) ---- */
+      .story { position: relative; background: #17181b; color: #fff; }
+      .story-stage { position: relative; background: #17181b; }
+      .sp-body { background: #17181b; }
+      .story-panels { position: relative; }
+      /* COVER STACK (estilo Dvele/Apple): cada panel es sticky al top — al scrollear, la
+         slide nueva SUBE y CUBRE a la anterior ("se la come"); la saliente queda congelada
+         y recede (escala + oscurecido). El orden del DOM da el apilado correcto. */
+      .story-panel { position: sticky; top: 0; height: 100svh; display: grid; grid-template-columns: 1.05fr 1fr;
+        overflow: hidden; will-change: transform; transform-origin: 50% 32%; }
+      /* Oscurecido de la slide saliente vía OPACIDAD de una capa (compositor puro).
+         `filter: brightness()` sobre una superficie de pantalla completa no está acelerado
+         en muchas GPU móviles y era la causa principal de los tirones durante la transición. */
+      .story-panel::after { content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+        background: #0b0c0e; opacity: var(--dim, 0); }
+      .sp-media img { will-change: transform; }
+      .sp-media { position: relative; overflow: hidden; background: #0e0f11; }
+      .sp-media img { width: 100%; height: 100%; object-fit: cover; }
+      .sp-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 60%, rgba(23,24,27,.6) 100%); }
+      .sp-body { display: flex; flex-direction: column; justify-content: center; padding: clamp(26px, 5vw, 92px); max-width: 640px; }
+      .sp-eyebrow { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #d8b47a; font-weight: 600; }
+      .sp-body h2 { font-size: var(--fs-d-panel); margin: 0; color: #fff; }
+      .sp-body p { font-size: clamp(16px, 1.4vw, 19px); line-height: var(--lh-body); color: rgba(255,255,255,.82); margin: 20px 0 0; }
+
+      /* indicador + botones: fixed al viewport, visibles solo durante el recorrido */
+      .story-count, .story-skip, .story-map, .story-arrow { opacity: 0; pointer-events: none; visibility: hidden;
+        transition: opacity .35s var(--ease), visibility .35s var(--ease); }
+      body.story-active .story-count, body.story-active .story-skip, body.story-active .story-map, body.story-active .story-arrow { opacity: 1; pointer-events: auto; visibility: visible; }
+      /* indicador de zona (arriba-derecha, solo número) */
+      .story-count { position: fixed; z-index: 46; top: var(--overlay-top); right: clamp(14px, 3vw, 30px);
+        padding: 9px 16px; border-radius: var(--r-pill); border: 1px solid rgba(255,255,255,.22); background: rgba(10,11,13,.72);
+        color: #fff; font-size: var(--fs-ui-s); font-weight: 600; line-height: var(--lh-ui); letter-spacing: .08em; font-variant-numeric: tabular-nums;
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+      .story-count .sc-sep, .story-count .sc-total { color: rgba(255,255,255,.62); }
+      /* flechas laterales para navegar el recorrido con clic */
+      /* flechas en la FILA DE CONTROLES inferior, flanqueando "Saltar recorrido":
+         mismo material que el skip (vidrio oscuro), alineadas a su misma altura */
+      .story-arrow { position: fixed; z-index: 46; bottom: calc(clamp(20px, 4vh, 40px) + env(safe-area-inset-bottom));
+        width: 44px; height: 44px; border-radius: var(--r-pill);
+        border: 1px solid rgba(255,255,255,.34); background: rgba(10,11,13,.72); color: #fff; display: grid; place-items: center;
+        cursor: pointer; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: background .2s, transform .2s, opacity .35s var(--ease), visibility .35s var(--ease); }
+      .story-arrow svg { width: 20px; height: 20px; }
+      .story-arrow.prev { right: calc(50% + 118px); left: auto; }
+      .story-arrow.next { left: calc(50% + 118px); right: auto; }
+      .story-arrow:active { transform: scale(.93); background: rgba(10,11,13,.85); }
+      @media (hover: hover) { .story-arrow:hover { background: rgba(10,11,13,.85); transform: translateY(-2px); } }
+      @media (max-width: 820px) {
+        .story-arrow { bottom: calc(16px + env(safe-area-inset-bottom)); }
+        .story-arrow.prev { right: calc(50% + 96px); }
+        .story-arrow.next { left: calc(50% + 96px); }
+      }
+      .story-map { position: fixed; z-index: 46; top: var(--overlay-top); left: 50%; transform: translateX(-50%);
+        display: inline-flex; align-items: center; gap: 8px; min-height: 44px; line-height: var(--lh-ui); padding: 9px 18px; border-radius: var(--r-pill);
+        border: 1px solid rgba(255,255,255,.34); background: rgba(10,11,13,.72); color: #fff; font-size: var(--fs-ui-s); font-weight: 600;
+        cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: background .2s, transform .2s, opacity .35s var(--ease), visibility .35s var(--ease); }
+      .story-map:hover { background: rgba(10,11,13,.85); transform: translateX(-50%) translateY(-2px); }
+      .story-map:active { transform: translateX(-50%) scale(.96); }
+      .story-map svg { width: 15px; height: 15px; }
+      /* botón saltar (abajo-centro) */
+      .story-skip { position: fixed; z-index: 46; left: 50%; bottom: calc(clamp(20px, 4vh, 40px) + env(safe-area-inset-bottom)); transform: translateX(-50%);
+        display: inline-flex; align-items: center; gap: 8px; min-height: 44px; line-height: var(--lh-ui); padding: 12px 24px; border-radius: var(--r-pill);
+        border: 1px solid rgba(255,255,255,.34); background: rgba(10,11,13,.72); color: #fff; font-size: var(--fs-ui-s); font-weight: 600;
+        cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: background .2s, transform .2s, opacity .35s var(--ease), visibility .35s var(--ease); }
+      .story-skip:hover { background: rgba(10,11,13,.85); transform: translateX(-50%) translateY(-2px); }
+      .story-skip:active { transform: translateX(-50%) scale(.96); }
+      .story-skip svg { width: 15px; height: 15px; }
+
+      @media (max-width: 820px) {
+        /* la foto es el argumento: 58svh de media; el texto centrado en 42svh */
+        .story-panel { grid-template-columns: 1fr; grid-template-rows: 58svh 42svh; }
+        .sp-media::after { background: linear-gradient(180deg, transparent 60%, rgba(23,24,27,.6) 100%); }
+        .sp-body { justify-content: center; padding: 20px 24px calc(64px + env(safe-area-inset-bottom)); overflow: hidden; }
+        .sp-body p { font-size: clamp(16px, 4.3vw, 18px); }
+        .story-count, .story-map { padding: 8px 12px; font-size: 13px; }
+        .story-count { right: 12px; }
+        .story-skip { bottom: calc(16px + env(safe-area-inset-bottom)); padding: 10px 16px; font-size: 13px; }
+      }
+
+      /* ---- CONTACTO ---- */
+      /* position+z-index: el contacto debe PINTAR ENCIMA de la última slide sticky del
+         recorrido (también entra "comiéndosela") */
+      .contact { position: relative; z-index: 2; background: var(--cream); padding: clamp(56px, 9vh, 110px) 0; }
+      .contact-head { text-align: center; max-width: var(--measure-head); margin: 0 auto clamp(32px, 5vh, 48px); }
+      .contact-head .eyebrow { color: var(--brass-ink); }
+      .contact-head h2 { font-size: var(--fs-d2); margin: 0; color: var(--ink); }
+      .contact-head h2 .lit { color: var(--green); }
+      .contact-head p { font-size: clamp(16px, 1.5vw, 18px); color: var(--muted); margin: 14px 0 0; line-height: var(--lh-body); }
+      .contact-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(18px, 3vw, 32px); align-items: stretch; max-width: 980px; margin: 0 auto; }
+      .contact-form { display: flex; flex-direction: column; gap: 14px; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: clamp(20px, 3vw, 30px); box-shadow: 0 18px 44px -26px rgba(0,0,0,.3); }
+      .cf-field { display: flex; flex-direction: column; gap: 6px; }
+      .cf-field span { font-size: var(--fs-ui-s); font-weight: 600; color: #4a463d; letter-spacing: .01em; }
+      .cf-field input, .cf-field textarea { font: inherit; font-size: 16px; /* <16px dispara auto-zoom en iOS */
+        color: var(--ink); background: var(--cream); border: 1px solid var(--line); border-radius: var(--r-s); padding: 12px 16px;
+        transition: border-color .18s var(--ease), box-shadow .18s var(--ease); }
+      .cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--muted); opacity: 1; }
+      .cf-field textarea { resize: vertical; min-height: 96px; }
+      .cf-field input:focus-visible, .cf-field textarea:focus-visible { border-color: var(--ring);
+        box-shadow: 0 0 0 3px rgba(31,68,51,.28); outline: 2px solid var(--ring); outline-offset: 2px; }
+      .cf-status { font-size: 16px; color: var(--green); margin: 8px 0 0; text-align: center; min-height: 1em; }
+      .cf-submit { justify-content: center; margin-top: 4px; }
+      .cf-submit svg { width: 17px; height: 17px; }
+      .cf-note { font-size: var(--fs-ui-s); color: var(--muted); margin: 2px 0 0; text-align: center; }
+      .contact-wa { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; justify-content: center;
+        background: linear-gradient(160deg, #eef3ee, #e7efe9);
+        border: 1px solid rgba(47,93,70,.16); border-radius: 20px; padding: clamp(22px, 3vw, 32px); }
+      .cw-head { display: flex; align-items: center; gap: 14px; }
+      .contact-wa .cw-ic { flex: none; width: 46px; height: 46px; border-radius: var(--r-s); background: var(--wa); color: #fff; display: grid; place-items: center; }
+      .contact-wa .cw-ic svg { width: 26px; height: 26px; }
+      .contact-wa h3 { font-size: var(--fs-d3); margin: 0; color: var(--ink); }
+      .contact-wa p { font-size: 16px; color: var(--muted); margin: 0; line-height: var(--lh-body); }
+      .cw-btn { margin-top: 6px; }
+      .cw-btn svg { width: 18px; height: 18px; }
+      @media (max-width: 760px) { .contact-grid { grid-template-columns: 1fr; } }
+
+      /* touch: evita que el estado :hover (elevación/color) se quede pegado tras tocar.
+         OJO: el reset NO debe pisar `.on` (misma especificidad y va después): en iOS el
+         hover pegajoso pintaba de blanco el chip recién seleccionado. */
+      @media (hover: none) {
+        .btn:hover, .btn-primary:hover, .btn-ghost:hover, .exp-label:hover, .story-skip:hover,
+        .hero-expand:hover, .lb-nav:hover, .wa-float:hover {
+          transform: none;
+        }
+        .exp-label:not(.on):hover { background: rgba(255,255,255,.92); color: #2a2822; border-color: rgba(27,26,23,.10); }
+        .btn-ghost:hover { background: transparent; border-color: var(--line); }
+        .exp-label:active { transform: scale(.96); }
+      }
+    </style>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <!-- ===================== NAV ===================== -->
+    <header class="nav" id="nav">
+      <div class="wrap nav-in">
+        <a class="brand" href="#top"><b>Aurora</b><span class="dot">.</span></a>
+        <nav class="nav-links" aria-label="Secciones">
+          <a class="lnk" href="#experiencia">El plano</a>
+          <a class="lnk" href="#recorrido">Recorrido</a>
+          <a class="lnk" href="#terreno">Terreno</a>
+          <a class="lnk" href="#ubicacion">Ubicación</a>
+          <a class="lnk" href="#estructura">Estructura</a>
+          <a class="lnk" href="#aviso">Aviso</a>
+        </nav>
+        <div class="nav-cta">
+          <a class="btn btn-ghost" href="tour/">Camina en 3D</a>
+          <a class="btn btn-primary" id="wa-nav" href="#contacto">Cotiza tu Aurora</a>
+          <button class="nav-burger" id="navBurger" type="button" aria-label="Abrir menú"
+                  aria-expanded="false" aria-controls="navMenu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- menú móvil: overlay con las secciones y las dos acciones -->
+    <div class="nav-menu" id="navMenu" aria-hidden="true">
+      <nav class="nav-menu-in" aria-label="Menú">
+        <a class="nm-lnk" href="#experiencia">El plano</a>
+        <a class="nm-lnk" href="#recorrido">Recorrido por dentro</a>
+        <a class="nm-lnk" href="#terreno">Tu terreno</a>
+        <a class="nm-lnk" href="#ubicacion">Ubicación</a>
+        <a class="nm-lnk" href="#estructura">La estructura</a>
+        <a class="nm-lnk" href="#aviso">Aviso sobre las imágenes</a>
+        <div class="nm-ctas">
+          <a class="btn btn-ghost" href="tour/">Camina en 3D</a>
+          <a class="btn btn-primary" href="#contacto">Cotiza tu Aurora</a>
+        </div>
+      </nav>
+    </div>
+
+    <span id="top"></span>
+
+    <!-- ===================== HERO (image-first) ===================== -->
+    <main id="contenido">
+    <section class="hero">
+      <div class="hero-slider">
+        <video class="hero-video hero-video--mobile" autoplay muted loop playsinline preload="metadata"
+               poster="fotos/poster-mobile.webp" aria-label="Casa prefabricada Aurora: un día completo del amanecer a la noche">
+          <source src="video/hero-seamless-mobile.mp4" type="video/mp4" />
+        </video>
+        <video class="hero-video hero-video--desktop" muted loop playsinline preload="none"
+               poster="fotos/poster-desktop.webp" aria-label="Casa prefabricada Aurora: un día completo del amanecer a la noche">
+          <source src="video/hero-seamless-desktop.mp4" type="video/mp4" />
+        </video>
+        <div class="frame">
+          <div class="hero-track" id="heroTrack"></div>
+        </div>
+        <div class="hero-scrim"></div>
+        <div class="hero-overlay">
+          <div class="wrap reveal">
+            <h1>Vive donde<br /><span class="lit">nace la luz.</span></h1>
+            <p class="lead">54 m², dos recámaras y terreno propio incluido.</p>
+            <div class="hero-price">
+              <p class="hp-main">
+                <span class="hp-num"><span class="hp-cur">US$</span> <span id="heroPrice">25,000</span><span class="hp-tag">Oferta limitada<span class="hp-shine" aria-hidden="true"></span></span></span>
+                <s class="hp-old">US$ 47,000</s>
+              </p>
+              <p class="hp-below">Oferta limitada a los primeros 3 lotes.<br />Incluye casa y terreno.</p>
+            </div>
+
+          </div>
+        </div>
+        <button class="hero-arrow prev" id="slPrev" type="button" aria-label="Foto anterior">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="hero-arrow next" id="slNext" type="button" aria-label="Foto siguiente">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <div class="hero-thumbs" id="heroThumbs" aria-hidden="true"></div>
+      </div>
+    </section>
+
+    <!-- ===================== FICHA TÉCNICA ===================== -->
+    <section class="specs" aria-label="Datos principales de la casa">
+      <div class="wrap specs-in reveal">
+        <div class="spec"><b>54 m²</b><span>de casa</span></div>
+        <div class="spec"><b>182 m²</b><span>de terreno incluido (13 × 14 m)</span></div>
+        <div class="spec"><b>2</b><span>recámaras</span></div>
+        <div class="spec"><b>1</b><span>baño y lavandería</span></div>
+      </div>
+    </section>
+
+    <!-- ===================== DISTRIBUCIÓN (diagrama: imagen centrada + etiquetas alrededor con líneas) ===================== -->
+    <section class="exp" id="experiencia" aria-label="Distribución de la casa">
+      <div class="wrap exp-stage">
+        <div class="exp-head reveal">
+          <span class="eyebrow">Distribución</span>
+          <h2>54 m² que se sienten más grandes</h2>
+          <p>Toca cada zona y te muestro dónde queda.</p>
+        </div>
+        <div class="exp-diagram" id="expDiagram">
+          <svg class="exp-svg" id="expSvg" aria-hidden="true"></svg>
+          <div class="exp-labels exp-labels--top" id="expLabelsTop"></div>
+          <figure class="exp-figure" id="expFig">
+            <img id="expImg" src="experiencia/casa.jpg" width="1376" height="768" alt="Distribución de la casa Aurora, imagen generada con IA" />
+            <div class="exp-dots" id="expDots"></div>
+          </figure>
+          <div class="exp-labels" id="expLabels"></div>
+          <p class="exp-hint" aria-hidden="true">Mantén presionado un chip para ubicarlo en el plano.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== RECORRIDO (storytelling pineado por zona) ===================== -->
+    <section class="story" id="recorrido" aria-label="Recorrido por las zonas">
+      <div class="story-stage" id="storyStage">
+        <div class="story-panels" id="storyPanels">
+          <article class="story-panel" data-zone="entrada">
+            <div class="sp-media"><img src="recorrido/r-fachada.jpg" srcset="recorrido/r-fachada-800.jpg 800w, recorrido/r-fachada.jpg 1600w" sizes="(max-width: 820px) 100vw, 52vw" width="1600" height="1079" fetchpriority="low" decoding="async" alt="Fachada de la casa Aurora, imagen generada con IA" /></div>
+            <div class="sp-body">
+              <h2>Por fuera</h2>
+              <p>Esto es lo primero que vas a ver: acero blanco, techo solar y puerta negra. Tu casa con terreno propio, lista para estrenar.</p>
+            </div>
+          </article>
+          <article class="story-panel" data-zone="sala">
+            <div class="sp-media"><img src="recorrido/r-sala.jpg" srcset="recorrido/r-sala-800.jpg 800w, recorrido/r-sala.jpg 1600w" sizes="(max-width: 820px) 100vw, 52vw" width="1600" height="893" loading="lazy" decoding="async" alt="Sala de la casa Aurora, imagen generada con IA" /></div>
+            <div class="sp-body">
+              <h2>Sala</h2>
+              <p>Salón abierto, sofá en L y ventanales que dejan entrar el sol toda la tarde. Aquí se junta la familia.</p>
+            </div>
+          </article>
+          <article class="story-panel" data-zone="cocina">
+            <div class="sp-media"><img src="recorrido/r-cocina.jpg" srcset="recorrido/r-cocina-800.jpg 800w, recorrido/r-cocina.jpg 1600w" sizes="(max-width: 820px) 100vw, 52vw" width="1600" height="893" loading="lazy" decoding="async" alt="Cocina y comedor de la casa Aurora, imagen generada con IA" /></div>
+            <div class="sp-body">
+              <h2>Cocina y comedor</h2>
+              <p>Cocina en L con cubierta de mármol, madera y parrilla empotrada. Al lado, la mesa para comer juntos bajo una lámpara baja.</p>
+            </div>
+          </article>
+          <article class="story-panel" data-zone="bano">
+            <div class="sp-media"><img src="recorrido/r-bano.jpg" srcset="recorrido/r-bano-800.jpg 800w, recorrido/r-bano.jpg 1543w" sizes="(max-width: 820px) 100vw, 52vw" width="1543" height="1600" loading="lazy" decoding="async" alt="Baño y lavandería de la casa Aurora, imagen generada con IA" /></div>
+            <div class="sp-body">
+              <h2>Baño y lavandería</h2>
+              <p>Baño con ducha y azulejo blanco, junto a un rincón de lavandería integrado. Práctico, limpio y bien resuelto en pocos metros.</p>
+            </div>
+          </article>
+          <article class="story-panel" data-zone="recamara">
+            <div class="sp-media"><img src="recorrido/r-recamara1.jpg" srcset="recorrido/r-recamara1-800.jpg 800w, recorrido/r-recamara1.jpg 1600w" sizes="(max-width: 820px) 100vw, 52vw" width="1600" height="1080" loading="lazy" decoding="async" alt="Recámara de la casa Aurora, imagen generada con IA" /></div>
+            <div class="sp-body">
+              <h2>Recámara</h2>
+              <p>Cama amplia, veladores y luz natural. La segunda recámara la usas como quieras: cuarto de visitas, oficina o vestidor.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- indicador + botones: fixed al viewport, visibles solo durante el recorrido -->
+      <div class="story-count" id="storyCount" role="status" aria-live="polite" aria-atomic="true"><span class="sr-only">Zona </span><span id="scCur">1</span><span class="sc-sep"> / </span><span class="sc-total">5</span></div>
+      <button class="story-map" id="storyMap" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 3v9l6-3 6 3 6-3V6l-6 3-6-3zM9 6v9M15 9v9"/></svg>
+        Ver el plano
+      </button>
+      <button class="story-arrow prev" id="storyPrev" type="button" aria-label="Zona anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="story-arrow next" id="storyNext" type="button" aria-label="Zona siguiente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <button class="story-skip" id="storySkip" type="button">
+        Saltar recorrido
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </button>
+    </section>
+
+    <!-- ===================== CONTACTO ===================== -->
+    <!-- ===================== EL TERRENO (aérea full-viewport con cotas animadas) ===================== -->
+    <section class="land" id="terreno" aria-label="El terreno">
+      <div class="land-in">
+        <figure class="land-fig-air reveal" id="landFig">
+          <img id="landImg" src="terreno/aereo.jpg" width="1152" height="928" loading="lazy" decoding="async"
+               alt="Vista aérea del lote de 13 por 14 metros con la casa Aurora, imagen generada con IA" />
+          <svg class="land-svg" id="landSvg" viewBox="0 0 1152 928" aria-hidden="true">
+            <polyline class="bl bd" points="200,842 948,842" />
+            <polyline class="bl bd" points="148,132 148,792" />
+          </svg>
+          <span class="build-dim land-dim--w" id="ldW">14 m</span>
+          <span class="build-dim land-dim--h" id="ldH">13 m</span>
+        </figure>
+        <div class="land-info reveal">
+          <h2>Tu terreno, visto desde arriba</h2>
+          <p class="land-sub">182 m² de terreno propio, incluidos en el precio. La casa ocupa 54 m²; el resto es tuyo.</p>
+          <div class="land-sum">
+            <div class="ls-row"><span class="ls-op"></span><b>54 m²</b><span class="ls-lbl">la casa</span></div>
+            <div class="ls-row"><span class="ls-op">+</span><b>128 m²</b><span class="ls-lbl">de terreno libre alrededor</span></div>
+            <div class="ls-row ls-total"><span class="ls-op">=</span><b>182 m²</b><span class="ls-lbl">tu lote completo de 13 × 14 m</span></div>
+          </div>
+          <ul class="land-perks">
+            <li>Frente a la calle de la colonia</li>
+            <li>Espacio de sobra para cochera y jardín</li>
+            <li>La casa llega instalada y lista</li>
+          </ul>
+          <p class="land-note">La imagen es un concepto: la cerca, la cochera, el carro y el jardín son ilustrativos y <b>no están incluidos</b>. Lo que recibes: la casa modular instalada y el terreno. <a href="#aviso">Ver aviso completo</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== UBICACIÓN ===================== -->
+    <section class="loc" id="ubicacion" aria-label="Ubicación del desarrollo">
+      <div class="wrap reveal">
+        <h2>Aquí va a estar tu casa</h2>
+        <p class="loc-sub">El punto exacto del desarrollo, junto a la Laguna de Chanmico: naturaleza a la puerta de tu casa.</p>
+        <div class="loc-map" id="locMap" role="img" aria-label="Mapa con la ubicación del desarrollo Aurora">
+          <button class="loc-recenter" id="locRecenter" type="button" aria-label="Centrar el mapa en el desarrollo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+          </button>
+        </div>
+        <div class="loc-actions">
+          <a class="btn btn-primary" href="https://www.google.com/maps/dir/?api=1&destination=13.772279,-89.352881" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            Cómo llegar
+          </a>
+          <a class="btn btn-ghost" href="https://maps.app.goo.gl/f6KGLSB9VmufxFhA6" target="_blank" rel="noopener">Ver en Google Maps</a>
+          <span class="loc-lake">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M2 12c2 0 2-1.5 4-1.5S8 12 10 12s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M2 17c2 0 2-1.5 4-1.5S8 17 10 17s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5"/></svg>
+            Junto a la Laguna de Chanmico
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== LA ESTRUCTURA ===================== -->
+    <section class="build" id="estructura" aria-label="La estructura">
+      <div class="wrap reveal">
+        <h2>Tres contenedores, una casa</h2>
+        <p class="build-sub">Aurora se arma con tres contenedores de acero unidos en sitio. Cada uno mide lo mismo; juntos hacen los 54 m².</p>
+
+        <!-- figura técnica: render + volumen punteado ANIMADO con las medidas reales -->
+        <figure class="build-fig" id="buildFig">
+          <img id="buildImg" src="estructura/contenedor.jpg" width="1312" height="816" loading="lazy" decoding="async"
+               alt="Contenedor del sistema Aurora con sus dimensiones, imagen generada con IA" />
+          <svg class="build-svg" id="buildSvg" viewBox="0 0 1312 816" aria-hidden="true">
+            <!-- aristas punteadas que completan el volumen desvanecido (se dibujan al entrar) -->
+            <polyline class="bl" points="880,155 1152,208" />
+            <polyline class="bl" points="1152,208 1152,592" />
+            <polyline class="bl" points="880,640 1152,592" />
+            <polyline class="bl" points="1152,208 968,246" />
+            <polyline class="bl" points="1152,592 968,636" />
+            <polyline class="bl" points="968,246 968,636" />
+            <!-- cotas: largo (abajo), alto (derecha), ancho (frente) -->
+            <polyline class="bl bd" points="500,748 1152,634" />
+            <polyline class="bl bd" points="1192,208 1192,592" />
+            <polyline class="bl bd" points="152,690 498,752" />
+          </svg>
+          <span class="build-dim build-dim--l" id="bdL">5.95 m</span>
+          <span class="build-dim build-dim--h" id="bdH">2.80 m</span>
+          <span class="build-dim build-dim--d" id="bdD">3.00 m</span>
+        </figure>
+
+        <!-- specs del sistema, digeridas para cualquier persona -->
+        <div class="build-specs">
+          <div class="bs"><b>5.95 × 3 × 2.8 m</b><span>cada contenedor</span></div>
+          <div class="bs"><b>Acero galvanizado</b><span>estructura y paredes</span></div>
+          <div class="bs"><b>7.5 cm de aislante</b><span>lana de roca: fresca por dentro</span></div>
+          <div class="bs"><b>Piso ignífugo</b><span>placa MGO de 15 mm</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="contact" id="contacto" aria-label="Contacto">
+      <div class="wrap contact-in reveal">
+        <div class="contact-head">
+          <h2>Hablemos de tu <span class="lit">Aurora</span></h2>
+          <p>Precio estimado: US$ 25,000 con terreno incluido. Déjanos tus datos y te enviamos la ubicación, las medidas exactas y la disponibilidad. Te contestamos el mismo día.</p>
+        </div>
+        <div class="contact-grid">
+          <form class="contact-form" id="contactForm" novalidate>
+            <label class="cf-field"><span>Nombre</span><input type="text" name="nombre" autocomplete="name" required placeholder="Tu nombre" /></label>
+            <label class="cf-field"><span>Correo</span><input type="email" name="email" autocomplete="email" required placeholder="tucorreo@ejemplo.com" /></label>
+            <label class="cf-field"><span>Mensaje</span><textarea name="mensaje" rows="4" placeholder="Hola, vi la casa Aurora y me interesa. ¿Me pueden dar más información?"></textarea></label>
+            <button class="btn btn-primary cf-submit" type="submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              Enviar por correo
+            </button>
+            <p class="cf-note">Se abrirá tu correo con el mensaje ya escrito.</p>
+            <p class="cf-status" id="cfStatus" role="status" aria-live="polite"></p>
+          </form>
+          <aside class="contact-wa">
+<div class="cw-head">            <div class="cw-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 2.1.55 4.06 1.6 5.83L2 22l4.38-1.68a9.9 9.9 0 004.66 1.18h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm5.8 14.16c-.24.68-1.4 1.3-1.94 1.34-.5.05-.96.24-3.23-.67-2.74-1.08-4.47-3.9-4.6-4.08-.13-.18-1.1-1.46-1.1-2.78 0-1.32.7-1.97.94-2.24.24-.27.53-.34.7-.34l.5.01c.16 0 .38-.06.6.46.24.55.8 1.9.87 2.04.07.14.12.3.02.48-.1.18-.15.29-.3.45-.14.16-.3.35-.44.47-.14.14-.29.28-.12.55.16.27.73 1.2 1.56 1.94 1.08.95 1.98 1.25 2.26 1.39.28.14.44.12.6-.07.16-.18.68-.8.86-1.07.18-.27.36-.22.6-.13.24.09 1.55.73 1.82.86.27.14.45.2.5.32.07.12.07.62-.17 1.3z"/></svg></div><h3>¿Prefieres WhatsApp?</h3></div>
+            <p>Escríbenos y te contestamos lo que necesites saber.</p>
+            <!-- (icono integrado en el encabezado vía CSS flex) -->
+            <a class="btn btn-wa cw-btn" id="contactWa" href="#" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 2.1.55 4.06 1.6 5.83L2 22l4.38-1.68a9.9 9.9 0 004.66 1.18h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2z"/></svg>
+              Escríbenos por WhatsApp
+            </a>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== AVISO (IA / concepto) ===================== -->
+    <div class="disclaimer" id="aviso">
+      <div class="wrap disclaimer-in reveal">
+        <span class="di-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg></span>
+        <p><b>Aviso:</b> todas las imágenes de este sitio y la casa en 3D son <b>representaciones conceptuales generadas con inteligencia artificial y modelado 3D</b> del prototipo. La oferta incluye únicamente <b>la casa modular (los tres contenedores), su instalación y el terreno</b>. Todo lo demás que aparece en las imágenes es concepto ilustrativo y <b>no está incluido</b>: el interior (cocina, muebles, baño y acabados) y también los exteriores mostrados (cerca perimetral, cochera, vehículos, jardín y vegetación). Cada persona equipa y construye eso a su gusto. Materiales, colores y dimensiones finales pueden variar respecto a lo mostrado. <b>Al contactarnos recibirás los detalles reales: dimensiones exactas, proceso de entrega y especificaciones completas.</b></p>
+      </div>
+    </div>
+
+
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer>
+      <div class="wrap foot-in">
+        <a class="brand" href="#top"><b>Aurora</b><span class="dot">.</span></a>
+        <div class="foot-links">
+          <a class="f-lnk" href="tour/">Camina en 3D</a>
+          <a class="f-lnk" href="#contacto">Cotiza tu Aurora</a>
+          <a class="f-lnk" href="#aviso">Aviso sobre las imágenes</a>
+        </div>
+        <small>Aurora · Casa prefabricada de 54 m² con terreno incluido</small>
+      </div>
+    </footer>
+
+    <!-- ===================== LIGHTBOX (visor de fotos) ===================== -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Galería de fotos de Aurora" aria-hidden="true">
+      <button class="lb-close" id="lbClose" type="button" aria-label="Cerrar visor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <button class="lb-nav prev" id="lbPrev" type="button" aria-label="Foto anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="lb-stage"><img class="lb-img" id="lbImg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" /></div>
+      <button class="lb-nav next" id="lbNext" type="button" aria-label="Foto siguiente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+      <div class="lb-count"><span id="lbNow">1</span> / <span id="lbTotal">8</span></div>
+    </div>
+
+    <!-- ===================== WHATSAPP FLOTANTE ===================== -->
+    <a class="wa-float" id="wa-float" href="#" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 2.1.55 4.06 1.6 5.83L2 22l4.38-1.68a9.9 9.9 0 004.66 1.18h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm5.8 14.16c-.24.68-1.4 1.3-1.94 1.34-.5.05-.96.24-3.23-.67-2.74-1.08-4.47-3.9-4.6-4.08-.13-.18-1.1-1.46-1.1-2.78 0-1.32.7-1.97.94-2.24.24-.27.53-.34.7-.34l.5.01c.16 0 .38-.06.6.46.24.55.8 1.9.87 2.04.07.14.12.3.02.48-.1.18-.15.29-.3.45-.14.16-.3.35-.44.47-.14.14-.29.28-.12.55.16.27.73 1.2 1.56 1.94 1.08.95 1.98 1.25 2.26 1.39.28.14.44.12.6-.07.16-.18.68-.8.86-1.07.18-.27.36-.22.6-.13.24.09 1.55.73 1.82.86.27.14.45.2.5.32.07.12.07.62-.17 1.3z"/></svg>
+    </a>
+
+    <!-- GSAP + ScrollTrigger (recorrido storytelling pineado) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Observer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollToPlugin.min.js"></script>
+
+    <script>
+      /* ============================================================
+         DATOS DE CONTACTO — EDITA ESTAS 2 LÍNEAS Y LISTO
+         ============================================================ */
+      const CONTACT = {
+        whatsapp: "50600000000",              // ← número con código de país, sin + ni espacios (ej. 502… / 521…)
+        email:    "contacto@aurora.casa",     // ← tu correo de ventas
+        mensaje:  "Hola, vi la casa Aurora y me interesa. ¿Me pueden dar más información?"
+      };
+
+      // Cablea los enlaces de WhatsApp (flotante + tarjeta de contacto).
+      // El CTA del nav ("Cotiza tu Aurora") es un ancla interna a #contacto, a propósito.
+      const waHref = "https://wa.me/" + CONTACT.whatsapp + "?text=" + encodeURIComponent(CONTACT.mensaje);
+      const waFloat = document.getElementById("wa-float");
+      if (waFloat) waFloat.href = waHref;
+      const contactWa = document.getElementById("contactWa");
+      if (contactWa) contactWa.href = waHref;
+
+      // Formulario de contacto → abre el correo con el mensaje listo (mailto)
+      const cForm = document.getElementById("contactForm");
+      if (cForm) cForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!cForm.checkValidity()) { cForm.reportValidity(); return; }   // valida formato, no solo vacío
+        const fd = new FormData(cForm);
+        const nombre = (fd.get("nombre") || "").toString().trim();
+        const correo = (fd.get("email") || "").toString().trim();
+        const msg = (fd.get("mensaje") || "").toString().trim() || CONTACT.mensaje;
+        const subject = "Consulta sobre la casa Aurora";
+        const body = "Hola, soy " + nombre + ".\n\n" + msg + "\n\nMi correo: " + correo;
+        window.location.href = "mailto:" + CONTACT.email + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        const st = document.getElementById("cfStatus");
+        if (st) st.textContent = "Abrimos tu correo con el mensaje listo. Si no se abrió, escríbenos a " + CONTACT.email + ".";
+      });
+
+      // Precio del hero: contador que CAE del precio de lista a la oferta (47,000 → 25,000)
+      (function () {
+        const el = document.getElementById("heroPrice");
+        if (!el || !window.gsap) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;   // queda el 25,000 estático
+        const from = 47000, target = 25000;
+        const st = { v: from };
+        el.textContent = from.toLocaleString("en-US");
+        gsap.to(st, {
+          v: target, duration: 1.8, delay: 0.5, ease: "power3.out",
+          onUpdate: () => { el.textContent = Math.round(st.v).toLocaleString("en-US"); },
+          onComplete: () => {
+            el.textContent = target.toLocaleString("en-US");
+            // POP en UNA sola curva (sin costura de dos tweens, que se sentía "trabada"):
+            // salta a 1.22 en el instante del aterrizaje y UN elastic suave lo asienta
+            // exactamente en 1. Origen centrado en vertical (no baila) y GPU forzada.
+            gsap.set(".hp-tag", { scale: 1.22, transformOrigin: "100% 50%", force3D: true });
+            gsap.to(".hp-tag", { scale: 1, duration: .8, ease: "elastic.out(1, 0.62)", force3D: true });
+            gsap.to(".hp-old", { scale: .82, opacity: .62, duration: .5, ease: "power2.out", transformOrigin: "0% 80%", force3D: true });
+            // reflejo "sol sobre metal" tras asentar, y repetido suave
+            gsap.fromTo(".hp-shine", { xPercent: -180 }, { xPercent: 340, duration: .9, ease: "power2.inOut", delay: .35 });
+            gsap.fromTo(".hp-shine", { xPercent: -180 }, { xPercent: 340, duration: 1.1, ease: "power2.inOut",
+              repeat: -1, repeatDelay: 2.5, delay: 2.5 });
+          },
+        });
+      })();
+
+      // Nav condensa al hacer scroll
+      const nav = document.getElementById("nav");
+      const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 24);
+      onScroll(); window.addEventListener("scroll", onScroll, { passive: true });
+
+      // Hero video: reproduce solo el visible (móvil 9:16 / PC 16:9). Ambos en LOOP boomerang
+      // (día→atardecer→día). Pausa fuera del hero y resume al volver.
+      (function () {
+        const mob = document.querySelector(".hero-video--mobile");
+        const desk = document.querySelector(".hero-video--desktop");
+        if (!mob || !desk) return;
+        const isDesk = window.matchMedia("(min-width: 821px)");
+        const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const RATE = 1.15;
+        const activeVid = () => (isDesk.matches ? desk : mob);
+        mob.playbackRate = RATE; desk.playbackRate = RATE;
+        [mob, desk].forEach((v) => v.addEventListener("play", () => { v.playbackRate = RATE; }));
+
+        let visible = true, userPaused = false;
+        const playActive = () => {
+          if (rm.matches || userPaused) return;
+          const v = activeVid();
+          v.playbackRate = RATE;
+          v.play().catch(() => {});
+        };
+        const apply = () => {
+          const other = isDesk.matches ? mob : desk;
+          other.pause();
+          if (rm.matches) { activeVid().pause(); }
+          else if (visible) { playActive(); }
+        };
+        apply();
+        isDesk.addEventListener("change", apply);
+        rm.addEventListener("change", apply);
+
+        // Pausa fuera del hero; resume al volver
+        const hero = document.querySelector(".hero");
+        if (hero && "IntersectionObserver" in window) {
+          new IntersectionObserver((es) => {
+            const e = es[0];
+            if (e.isIntersecting && !visible) { visible = true; playActive(); }
+            else if (!e.isIntersecting && visible) { visible = false; activeVid().pause(); }
+          }, { threshold: 0.35 }).observe(hero);
+        }
+      })();
+
+      // Hero slider
+      (function () {
+        const track = document.getElementById("heroTrack");
+        const thumbsWrap = document.getElementById("heroThumbs");
+        const prevBtn = document.getElementById("slPrev");
+        const nextBtn = document.getElementById("slNext");
+        if (!track || !thumbsWrap || !prevBtn || !nextBtn) return;
+
+        const slides = Array.from(track.querySelectorAll("img"));
+        const total = slides.length;
+        let idx = 0;
+
+        // Build thumbnails
+        const thumbs = slides.map((img, i) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "hero-thumb" + (i === 0 ? " active" : "");
+          b.setAttribute("role", "tab");
+          b.setAttribute("aria-label", "Ver foto " + (i + 1) + " de " + total);
+          b.setAttribute("aria-selected", i === 0 ? "true" : "false");
+          const t = document.createElement("img");
+          t.src = img.getAttribute("src");
+          t.alt = "";
+          t.loading = "lazy";
+          b.appendChild(t);
+          b.addEventListener("click", () => go(i));
+          thumbsWrap.appendChild(b);
+          return b;
+        });
+
+        function go(i) {
+          idx = (i + total) % total;
+          track.style.transform = "translateX(" + (-idx * 100) + "%)";
+          thumbs.forEach((t, j) => {
+            const on = j === idx;
+            t.classList.toggle("active", on);
+            t.setAttribute("aria-selected", on ? "true" : "false");
+          });
+          const active = thumbs[idx];
+          // Centra la miniatura activa moviendo SOLO la tira (no scrollIntoView, que corría el scroll horizontal de toda la página → hero descentrado).
+          if (active) thumbsWrap.scrollTo({ left: active.offsetLeft - (thumbsWrap.clientWidth - active.clientWidth) / 2, behavior: "smooth" });
+        }
+
+        prevBtn.addEventListener("click", () => go(idx - 1));
+        nextBtn.addEventListener("click", () => go(idx + 1));
+
+        // Pointer / touch swipe
+        let startX = null, dragging = false;
+        track.addEventListener("pointerdown", (e) => {
+          dragging = true; startX = e.clientX;
+        });
+        window.addEventListener("pointerup", (e) => {
+          if (!dragging || startX === null) return;
+          const dx = e.clientX - startX;
+          if (Math.abs(dx) > 40) go(idx + (dx < 0 ? 1 : -1));
+          dragging = false; startX = null;
+        });
+
+        // Keyboard support when slider focused
+        track.setAttribute("tabindex", "0");
+        track.addEventListener("keydown", (e) => {
+          if (e.key === "ArrowLeft") { e.preventDefault(); go(idx - 1); }
+          else if (e.key === "ArrowRight") { e.preventDefault(); go(idx + 1); }
+        });
+      })();
+
+      // ---- Lightbox: ver las fotos en grande, sin texto ----
+      (function () {
+        const lb = document.getElementById("lightbox");
+        if (!lb) return;
+        const img = document.getElementById("lbImg"), now = document.getElementById("lbNow"), total = document.getElementById("lbTotal");
+        const PHOTOS = [
+          { src: "fotos/ext-aerial-dusk.jpg",  alt: "Vista aérea de Aurora al atardecer, imagen generada con IA" },
+          { src: "fotos/ext-front-golden.jpg", alt: "Fachada de Aurora con luz dorada de tarde, imagen generada con IA" },
+          { src: "fotos/ext-aerial-day.jpg",   alt: "Vista aérea de Aurora de día, imagen generada con IA" },
+          { src: "fotos/ext-3q-left.jpg",      alt: "Perspectiva izquierda de Aurora, imagen generada con IA" },
+          { src: "fotos/ext-3q-right.jpg",     alt: "Perspectiva derecha de Aurora, imagen generada con IA" },
+          { src: "fotos/ext-rear-oak.jpg",     alt: "Parte trasera de Aurora entre robles, imagen generada con IA" },
+          { src: "fotos/ext-rear-hills.jpg",   alt: "Parte trasera de Aurora frente a las colinas, imagen generada con IA" },
+          { src: "fotos/ext-front-cloud.jpg",  alt: "Fachada de Aurora bajo el cielo, imagen generada con IA" },
+        ];
+        if (!PHOTOS.length) return;
+        total.textContent = PHOTOS.length;
+        let i = 0, isOpen = false, lastFocused = null;
+        const closeBtn = document.getElementById("lbClose"), prevBtn = document.getElementById("lbPrev"), nextBtn = document.getElementById("lbNext");
+        const focusables = () => [closeBtn, prevBtn, nextBtn].filter((b) => b && b.offsetParent !== null);
+        const preload = (n) => { const p = PHOTOS[(n + PHOTOS.length) % PHOTOS.length]; const im = new Image(); im.src = p.src; };
+        function show(n) { i = (n + PHOTOS.length) % PHOTOS.length; img.src = PHOTOS[i].src; img.alt = PHOTOS[i].alt; now.textContent = i + 1; preload(i + 1); preload(i - 1); }
+        function open(n) {
+          lastFocused = document.activeElement;
+          show(n); lb.classList.add("open"); lb.setAttribute("aria-hidden", "false"); document.body.classList.add("lb-open");
+          requestAnimationFrame(() => lb.classList.add("vis")); isOpen = true;
+          closeBtn.focus();
+        }
+        function close() {
+          lb.classList.remove("vis"); document.body.classList.remove("lb-open"); lb.setAttribute("aria-hidden", "true"); isOpen = false;
+          setTimeout(() => lb.classList.remove("open"), 300);
+          if (lastFocused && lastFocused.focus) lastFocused.focus();
+        }
+        closeBtn.addEventListener("click", close);
+        prevBtn.addEventListener("click", () => show(i - 1));
+        nextBtn.addEventListener("click", () => show(i + 1));
+        lb.addEventListener("click", (e) => { if (e.target === lb || e.target.classList.contains("lb-stage")) close(); }); // clic en el fondo cierra
+        document.addEventListener("keydown", (e) => {
+          if (!isOpen) return;
+          if (e.key === "Escape") close();
+          else if (e.key === "ArrowRight") show(i + 1);
+          else if (e.key === "ArrowLeft") show(i - 1);
+          else if (e.key === "Tab") { // trap de foco dentro del visor
+            const f = focusables(); if (!f.length) return;
+            const first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+            else if (!f.includes(document.activeElement)) { e.preventDefault(); first.focus(); }
+          }
+        });
+        let x0 = null;
+        // gestos: discrimina eje (un swipe vertical con deriva ya no cambia de foto)
+        // y añade el estándar de galería móvil: arrastrar hacia abajo/arriba cierra.
+        let y0 = null;
+        lb.addEventListener("pointerdown", (e) => { x0 = e.clientX; y0 = e.clientY; });
+        lb.addEventListener("pointerup", (e) => {
+          if (x0 == null) return;
+          const dx = e.clientX - x0, dy = e.clientY - y0;
+          if (Math.abs(dy) > 90 && Math.abs(dy) > Math.abs(dx) * 1.4) close();
+          else if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.2) show(i + (dx < 0 ? 1 : -1));
+          x0 = y0 = null;
+        });
+        // Disparadores: botón del hero (abre en la foto actual) + fotos de la galería
+        const he = document.getElementById("heroExpand");
+        if (he) he.addEventListener("click", () => { const at = Array.from(document.getElementById("heroThumbs").children).findIndex((b) => b.classList.contains("active")); open(at < 0 ? 0 : at); });
+        const idxBySrc = (src) => { const f = src.split("/").pop(); return PHOTOS.findIndex((p) => p.src.split("/").pop() === f); };
+        document.querySelectorAll(".gal-photos figure img").forEach((im) => { im.style.cursor = "zoom-in"; im.addEventListener("click", () => { const n = idxBySrc(im.getAttribute("src")); open(n < 0 ? 0 : n); }); });
+        window.__lbOpen = (src) => { const n = idxBySrc(src || ""); open(n < 0 ? 0 : n); }; // abrir el visor desde otras secciones (story "+")
+      })();
+
+      // ---- Distribución: diagrama con etiquetas alrededor + líneas a cada zona (estilo anatómico) ----
+      (function () {
+        // x/y = % SOBRE la imagen (punto de la zona). side/ly = colocación de la etiqueta alrededor.
+        const ZONES = [
+          // side/ly = posición desktop (alrededor con líneas); ms = fila móvil (top/bottom del plano)
+          { key: "cocina",     label: "Cocina y comedor", x: 32, y: 30, side: "left",  ly: 28, ms: "top" },
+          { key: "sala",       label: "Sala",             x: 18, y: 66, side: "left",  ly: 66, ms: "bottom" },
+          { key: "bano",       label: "Baño",             x: 54, y: 26, side: "right", ly: 10, ms: "top" },
+          { key: "recamara2",  label: "Recámara 2",       x: 67, y: 21, side: "right", ly: 29, ms: "top" },
+          { key: "lavanderia", label: "Lavandería",       x: 49, y: 33, side: "right", ly: 48, ms: "bottom" },
+          { key: "recamara",   label: "Recámara 1",       x: 72, y: 58, side: "right", ly: 68, ms: "bottom" },
+          { key: "entrada",    label: "Entrada",          x: 50, y: 83, side: "bottom", ms: "bottom" },
+        ];
+        const NS = "http://www.w3.org/2000/svg";
+        const diagram = document.getElementById("expDiagram");
+        const dotsWrap = document.getElementById("expDots");
+        const labelsWrap = document.getElementById("expLabels");
+        const labelsWrapTop = document.getElementById("expLabelsTop");
+        const svg = document.getElementById("expSvg");
+        const img = document.getElementById("expImg");
+        if (!diagram || !dotsWrap || !labelsWrap || !svg || !img) return;
+
+        const fig = document.getElementById("expFig");
+        const dots = [], labels = [], lines = [];
+        let chipOffT = null;   // timer COMPARTIDO de apagado (uno por mapa, no por chip)
+        ZONES.forEach((z, i) => {
+          const d = document.createElement("span");
+          d.className = "exp-dot"; d.style.left = z.x + "%"; d.style.top = z.y + "%";
+          dotsWrap.appendChild(d); dots.push(d);
+
+          const lb = document.createElement("button");
+          lb.type = "button"; lb.className = "exp-label";
+          lb.innerHTML = '<span class="exp-lb-dot" aria-hidden="true"></span><span class="exp-lb-t">' + z.label + "</span>";
+          lb.setAttribute("data-side", z.side);
+          if (z.side !== "bottom") lb.style.top = z.ly + "%";
+          lb.setAttribute("aria-label", "Ubicar " + z.label + " en el plano");
+          (z.ms === "top" ? labelsWrapTop : labelsWrap).appendChild(lb); labels.push(lb);
+
+          const pl = document.createElementNS(NS, "polyline");
+          svg.appendChild(pl); lines.push(pl);
+
+          // mapeo etiqueta del plano → zona del recorrido (lavandería comparte con baño)
+          const toStory = { entrada: "entrada", sala: "sala", comedor: "comedor", cocina: "cocina", bano: "bano", lavanderia: "bano", recamara: "recamara", recamara2: "recamara" };
+          lb.addEventListener("mouseenter", () => emphasize(i));
+          lb.addEventListener("mouseleave", clear);
+          lb.addEventListener("focus", () => emphasize(i));
+          lb.addEventListener("blur", clear);
+          // MANTENER PRESIONADO = ubicar la zona: el punto se enciende MIENTRAS el dedo
+          // está abajo y se apaga solo al soltar (nada queda "seleccionado" pegado).
+          // TAP corto = navega a esa zona del recorrido.
+          let pressT = 0;
+          const release = (delay) => { clearTimeout(chipOffT); chipOffT = setTimeout(clear, delay); };
+          lb.addEventListener("pointerdown", () => {
+            clearTimeout(chipOffT);
+            pressT = performance.now();
+            emphasize(i);
+          }, { passive: true });
+          lb.addEventListener("pointerup", () => release(900), { passive: true });
+          lb.addEventListener("pointercancel", () => release(300), { passive: true });
+          lb.addEventListener("click", () => {
+            if (performance.now() - pressT > 450) return;   // press largo: solo ubicar
+            emphasize(i); release(1200);
+            if (window.__storyGoTo) window.__storyGoTo(toStory[z.key] || z.key);
+          });
+        });
+
+        // coords en el espacio de layout del diagrama (normalizadas por la escala del efecto focus)
+        function draw() {
+          const box = diagram.getBoundingClientRect();
+          const scale = box.width / diagram.offsetWidth || 1;
+          const rel = (el) => {
+            const r = el.getBoundingClientRect();
+            return {
+              l: (r.left - box.left) / scale, t: (r.top - box.top) / scale,
+              r: (r.right - box.left) / scale, b: (r.bottom - box.top) / scale,
+              cx: (r.left + r.width / 2 - box.left) / scale, cy: (r.top + r.height / 2 - box.top) / scale,
+            };
+          };
+          const F = rel(fig);
+          if (window.matchMedia("(max-width: 820px)").matches) return; // móvil: sin líneas (chips alrededor + punto que se enciende)
+          ZONES.forEach((z, i) => {
+            const L = rel(labels[i]), D = rel(dots[i]);
+            let pts;
+            if (z.side === "left")       pts = [[L.r, L.cy], [F.l, L.cy], [D.cx, D.cy]];
+            else if (z.side === "right")   pts = [[L.l, L.cy], [F.r, L.cy], [D.cx, D.cy]];
+            else                           pts = [[L.cx, L.t], [D.cx, F.b], [D.cx, D.cy]]; // bottom: sube por el canal y entra
+            lines[i].setAttribute("points", pts.map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" "));
+          });
+        }
+        function clear() { lines.forEach((l) => l.classList.remove("on")); dots.forEach((d) => d.classList.remove("on")); labels.forEach((l) => l.classList.remove("on")); }
+        function emphasize(i) { clear(); lines[i].classList.add("on"); dots[i].classList.add("on"); labels[i].classList.add("on"); }
+
+        if (img.complete) draw(); else img.addEventListener("load", draw, { once: true });
+        let raf = null;
+        const redraw = () => { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); };
+        window.addEventListener("resize", redraw, { passive: true });
+
+        // Enfoque ligado al scroll: al acercarse al centro, la sección revela la UI y el diagrama
+        // "crece" para abarcar la pantalla; al alejarse, se contrae. --focus va de 0 (lejos) a 1 (centrada).
+        const exp = document.getElementById("experiencia");
+        const stage = exp && exp.querySelector(".exp-stage");
+        const rmq = window.matchMedia("(prefers-reduced-motion: reduce)");
+        function updateFocus() {
+          if (rmq.matches) { exp.style.setProperty("--focus", "1"); return; }
+          const r = stage.getBoundingClientRect();
+          const center = r.top + r.height / 2;
+          const dist = Math.abs(center - window.innerHeight / 2) / (window.innerHeight / 2);
+          const focus = Math.max(0, Math.min(1, 1 - dist));
+          exp.style.setProperty("--focus", focus.toFixed(3));
+        }
+        let fRaf = null;
+        const onFocusScroll = () => { if (fRaf) cancelAnimationFrame(fRaf); fRaf = requestAnimationFrame(updateFocus); };
+        if (exp && stage) {
+          window.addEventListener("scroll", onFocusScroll, { passive: true });
+          window.addEventListener("resize", onFocusScroll, { passive: true });
+          updateFocus();
+        }
+
+        // Reveal escalonado de los chips: se re-anima CADA vez que se enfoca la sección
+        // (al salir se ocultan; al volver aparecen uno por uno otra vez).
+        const chipTexts = labels.map((l) => l.querySelector(".exp-lb-t"));
+        const chipDots = labels.map((l) => l.querySelector(".exp-lb-dot"));
+        const showAllStatic = () => { labels.forEach((l) => (l.style.opacity = "1")); dots.forEach((d) => (d.style.opacity = "1")); lines.forEach((l) => (l.style.opacity = "1")); };
+
+        if (!window.gsap || rmq.matches || !stage || !("IntersectionObserver" in window)) {
+          showAllStatic();
+        } else {
+          let shown = false;
+          // Secuencia por zona: PUNTO aparece → LÍNEA se dibuja raya por raya → CHIP aparece.
+          const revealSequence = () => {
+            draw(); // recalcula puntos de las líneas por si el layout cambió
+            gsap.killTweensOf([dots, lines, labels, chipTexts, chipDots]);
+            const tl = gsap.timeline();
+            ZONES.forEach((z, i) => {
+              const t = i * 0.26;
+              tl.fromTo(dots[i], { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.22, ease: "back.out(2.4)" }, t);
+              const len = lines[i].getTotalLength ? lines[i].getTotalLength() : 220;
+              gsap.set(lines[i], { opacity: 1, strokeDasharray: len, strokeDashoffset: len });
+              tl.to(lines[i], { strokeDashoffset: 0, duration: 0.34, ease: "power1.inOut" }, t + 0.15);
+              tl.fromTo(labels[i], { opacity: 0 }, { opacity: 1, duration: 0.24, ease: "power2.out" }, t + 0.4);
+              tl.fromTo(chipTexts[i], { y: 8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.24, ease: "power3.out" }, t + 0.4);
+              tl.fromTo(chipDots[i], { scale: 0 }, { scale: 1, duration: 0.24, ease: "back.out(2.4)" }, t + 0.4);
+            });
+            // demo: al terminar, el primer chip se "presiona" solo un instante — enseña
+            // sin palabras que los chips se tocan y ubican su zona en el plano
+            tl.call(() => {
+              emphasize(0);
+              gsap.fromTo(labels[0], { scale: 1 }, { scale: .96, duration: .14, yoyo: true, repeat: 1, ease: "power2.inOut" });
+              setTimeout(clear, 1600);
+            }, null, "+=0.3");
+          };
+          const hideAll = () => {
+            gsap.killTweensOf([dots, lines, labels, chipTexts, chipDots]);
+            gsap.set(dots, { opacity: 0, scale: 0 });
+            gsap.set(lines, { opacity: 0 });
+            gsap.set(labels, { opacity: 0 });
+          };
+          hideAll();
+          // Observamos el STAGE (100vh): su ratio llega alto al centrarse en móvil.
+          new IntersectionObserver((entries) => {
+            const vis = entries[0].intersectionRatio >= 0.7;
+            if (vis && !shown) { shown = true; revealSequence(); }
+            else if (!vis && shown) { shown = false; hideAll(); }
+          }, { threshold: [0, 0.4, 0.7, 0.95] }).observe(stage);
+        }
+      })();
+
+      // ---- Recorrido storytelling: COVER STACK nativo (scroll-snap + sticky).
+      // Cada slide es una sección de 100svh; el navegador maneja el gesto (snap mandatory:
+      // un flick corto avanza). Sticky hace que la nueva slide CUBRA a la anterior; GSAP
+      // scrub (mapea progreso de scroll, NO secuestra) hace que la saliente receda
+      // (escala+dim) y la imagen entrante haga un settle suave — estilo Dvele/Apple.
+      (function () {
+        const story = document.getElementById("recorrido");
+        const panelsWrap = document.getElementById("storyPanels");
+        const skip = document.getElementById("storySkip");
+        if (!story || !panelsWrap) return;
+        const panels = Array.from(panelsWrap.children);
+        const n = panels.length;
+        const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const scCur = document.getElementById("scCur");
+        let cur = -1;
+
+        if (window.gsap) gsap.registerPlugin(...[window.ScrollTrigger, window.ScrollToPlugin].filter(Boolean));
+
+        // salto instantáneo (explícito: si alguien reintroduce scroll-behavior:smooth en el
+        // CSS, esto sigue siendo inmediato — pero NO lo reintroduzcas: rompe las animaciones)
+        const jumpTo = (y) => window.scrollTo({ top: y, left: 0, behavior: "instant" });
+        const topOf = (el) => Math.round(window.scrollY + el.getBoundingClientRect().top);
+        // base/altura del stack: panelsWrap nunca es sticky → medidas estables
+        const baseY = () => topOf(panelsWrap);
+        const slideH = () => panels[0].offsetHeight || window.innerHeight;
+        const slideY = (i) => baseY() + i * slideH();
+        // "Ver el plano": centra el DIAGRAMA (plano + chips) en el viewport — no el punto
+        // medio ciego de la sección, que en móvil dejaba el plano cortado abajo.
+        const mapCenterY = () => {
+          const d = document.getElementById("expDiagram") || document.getElementById("experiencia");
+          if (!d) return 0;
+          const r = d.getBoundingClientRect();
+          return Math.max(0, Math.round(window.scrollY + r.top - Math.max(0, (window.innerHeight - r.height) / 2)));
+        };
+
+        // Reveal del texto cada vez que una slide pasa a ser la activa
+        function reveal(p) {
+          if (!window.gsap || rm.matches) return;
+          const text = p.querySelectorAll(".sp-eyebrow, h2, p");
+          gsap.killTweensOf(text);
+          gsap.fromTo(text, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, stagger: 0.08, ease: "power3.out", delay: 0.08, clearProps: "all" });
+        }
+
+        // Slide activa por POSICIÓN de scroll (con sticky, IntersectionObserver no sirve:
+        // los paneles cubiertos siguen "intersectando"). Listener passive + rAF-throttle.
+        function update() {
+          const h = slideH(), y = window.scrollY - baseY();
+          const active = y > -h * 0.5 && y < n * h - h * 0.5;   // recorrido "en foco"
+          document.body.classList.toggle("story-active", active);
+          if (!active) return;
+          const i = Math.max(0, Math.min(n - 1, Math.round(y / h)));
+          if (i !== cur) {
+            cur = i;
+            if (scCur) scCur.textContent = String(i + 1);
+            reveal(panels[i]);
+          }
+        }
+        let raf = null;
+        window.addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(() => { raf = null; update(); }); }, { passive: true });
+        window.addEventListener("resize", update, { passive: true });
+        update();
+
+        // ---- NAVEGACIÓN POR GESTO: una slide por gesto, con una sola animación ----
+        // El scroll nativo hace el ARRASTRE en táctil (1:1, se ve el cover en vivo) y al
+        // soltar GSAP completa la transición. Se usa gsap.to(window,{scrollTo}) y NO un rAF
+        // propio porque comparte el ticker con el scrub del cover → posición y animación en
+        // el MISMO frame (cero desfase). `autoKill:false` es obligatorio: si no, el momentum
+        // de iOS cancela la animación al instante. CSS scroll-snap está desactivado a
+        // propósito (competía con esta animación = tirones).
+        const canGlide = () => window.gsap && gsap.plugins && gsap.plugins.scrollTo && !rm.matches;
+        let gliding = false;
+        // Curvas: gesto = el movimiento YA viene en marcha → power2.out (arranca rápido,
+        // aterriza suave, como la inercia de iOS). Botones/flechas parten del reposo →
+        // power2.inOut. 620/700ms: rango de "transición de pantalla completa".
+        function glideToSlide(i, ease, duration) {
+          i = Math.max(0, Math.min(n - 1, i));
+          const y = slideY(i);
+          if (!canGlide()) { jumpTo(y); update(); return; }
+          gliding = true;
+          const done = () => (gliding = false);
+          gsap.to(window, {
+            scrollTo: { y: y, autoKill: false },
+            duration: duration || 0.62, ease: ease || "power2.out",
+            overwrite: true, onComplete: done, onInterrupt: done,
+          });
+        }
+        const stopGlide = () => { if (gliding) { gsap.killTweensOf(window); gliding = false; } };
+        // slide adyacente EXACTA en la dirección del gesto, desde la posición actual
+        // (por eso la fuerza del gesto es irrelevante: nunca salta 1→3)
+        const relY = () => window.scrollY - baseY();
+        const nextIndex = (dir, rel) => (dir > 0 ? Math.floor(rel / slideH() + 0.02) + 1 : Math.ceil(rel / slideH() - 0.02) - 1);
+        const insideStack = (m) => { const h = slideH(), r = relY(); return r > -h * m && r < (n - 1) * h + h * m; };
+
+        // TÁCTIL: sin preventDefault → el arrastre sigue siendo nativo y suave
+        let ty = null;
+        window.addEventListener("touchstart", (e) => { stopGlide(); ty = e.touches[0].clientY; }, { passive: true });
+        window.addEventListener("touchend", (e) => {
+          if (ty == null) return;
+          const dy = ty - e.changedTouches[0].clientY;          // >0 = swipe arriba = siguiente
+          ty = null;
+          if (!insideStack(0.6)) return;
+          const h = slideH(), rel = relY();
+          if (Math.abs(dy) < 24) {                              // gesto mínimo: acomoda a la más cercana
+            const near = Math.round(rel / h);
+            if (Math.abs(rel - near * h) > 2) glideToSlide(near, "power2.inOut", 0.45);
+            return;
+          }
+          const target = nextIndex(dy > 0 ? 1 : -1, rel);
+          if (target < 0 || target > n - 1) return;             // extremos: salida libre nativa
+          glideToSlide(target);
+        }, { passive: true });
+
+        // RUEDA/TRACKPAD: dentro del stack mandamos nosotros (un paso por ráfaga, sin
+        // importar la fuerza); en los extremos no interceptamos → se sale con scroll libre.
+        // Anti doble-paso: un fling de trackpad emite eventos ~1.5s (más que el glide),
+        // así que un cooldown corto dejaba pasar un 2º paso con la cola de inercia.
+        // Regla: la COLA de una ráfaga nunca re-dispara (los deltas solo decaen);
+        // solo un gesto RENOVADO — pausa >160ms o delta que supera el pico — cuenta.
+        let wheelTs = 0, lastEvT = 0, burstPeak = 0;
+        window.addEventListener("wheel", (e) => {
+          if (!insideStack(0.5)) return;
+          const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+          if (Math.abs(d) < 2) return;
+          const target = nextIndex(d > 0 ? 1 : -1, relY());
+          if (target < 0 || target > n - 1) return;             // extremos: nativo
+          e.preventDefault();                                   // evita que el scroll nativo pelee
+          const now = performance.now();
+          const gap = now - lastEvT; lastEvT = now;
+          const mag = Math.abs(d);
+          const renewed = gap > 160 || mag > burstPeak * 1.35;  // gesto nuevo del usuario
+          burstPeak = renewed ? mag : Math.max(burstPeak, mag);
+          if (gliding || now - wheelTs < 640) return;
+          if (!renewed && now - wheelTs < 1500) return;         // cola de inercia: fuera
+          wheelTs = now;
+          glideToSlide(target);
+        }, { passive: false });
+
+        // Scrubs del COVER (GSAP ScrollTrigger, scrub:true = ligado 1:1 al scroll):
+        //  - la slide ANTERIOR recede mientras la nueva la cubre (scale + brightness)
+        //  - la imagen de la ENTRANTE hace settle (scale 1.12→1) al subir
+        if (window.gsap && window.ScrollTrigger && !rm.matches) {
+          panels.forEach((p, i) => {
+            const nextP = panels[i + 1];
+            if (nextP) {
+              gsap.fromTo(p, { scale: 1, "--dim": 0 }, {
+                scale: 0.94, "--dim": 0.55, ease: "none",
+                scrollTrigger: { trigger: nextP, start: () => "top bottom", end: () => "top top", scrub: true, invalidateOnRefresh: true },
+              });
+            }
+            if (i > 0) {
+              const img = p.querySelector(".sp-media img");
+              gsap.fromTo(img, { scale: 1.12 }, {
+                scale: 1, ease: "none",
+                scrollTrigger: { trigger: p, start: () => "top bottom", end: () => "top top", scrub: true, invalidateOnRefresh: true },
+              });
+            }
+          });
+          window.addEventListener("load", () => ScrollTrigger.refresh());
+        }
+
+        // flechas ‹ › : slide anterior/siguiente. El índice se toma de la POSICIÓN real
+        // (no de `cur`, que se actualiza en el siguiente frame → dos taps rápidos irían
+        // al mismo destino). Parten del reposo → power2.inOut.
+        const goStep = (dir) => {
+          stopGlide();
+          const target = Math.round(relY() / slideH()) + dir;
+          if (target > n - 1) { goOut(afterStoryY()); return; }  // última slide: › sale a Tu terreno
+          if (target < 0) { goOut(mapCenterY()); return; }       // primera slide: ‹ vuelve al plano
+          glideToSlide(target, "power2.inOut", 0.7);
+        };
+        const pv = document.getElementById("storyPrev"), nx = document.getElementById("storyNext");
+        if (pv) pv.addEventListener("click", () => goStep(-1));
+        if (nx) nx.addEventListener("click", () => goStep(1));
+
+        // chips de la distribución → saltan directo a esa zona
+        window.__storyZones = panels.map((p) => p.getAttribute("data-zone"));
+        window.__storyGoTo = (zoneOrIndex) => {
+          let idx = typeof zoneOrIndex === "number" ? zoneOrIndex : window.__storyZones.indexOf(zoneOrIndex);
+          if (idx < 0) idx = 0;
+          cur = -1;                          // fuerza reveal/indicador al llegar
+          stopGlide();
+          jumpTo(slideY(idx));
+          update();
+        };
+
+        // salidas de la sección (flechas en extremos, Saltar, Ver el plano): glide ANIMADO.
+        // Parten del reposo → power2.inOut; interrumpible (touchstart lo mata vía stopGlide).
+        const goOut = (y) => {
+          stopGlide();
+          if (!canGlide()) { jumpTo(y); update(); return; }
+          gliding = true;
+          const done = () => { gliding = false; update(); };
+          gsap.to(window, { scrollTo: { y: y, autoKill: false }, duration: .8, ease: "power2.inOut",
+            overwrite: true, onComplete: done, onInterrupt: done });
+        };
+        const afterStoryY = () => {
+          const t = document.getElementById("terreno") || document.getElementById("contacto") || story.nextElementSibling;
+          return t ? topOf(t) : 0;
+        };
+        if (skip) skip.addEventListener("click", () => goOut(afterStoryY()));
+        const mapBtn = document.getElementById("storyMap");
+        if (mapBtn) mapBtn.addEventListener("click", () => goOut(mapCenterY()));
+      })();
+
+      // Hero shrink: al scrollear hacia la distribución, el hero se encoge y desvanece (--hs 0→1)
+      (function () {
+        const hero = document.querySelector(".hero");
+        if (!hero) return;
+        const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+        let raf = null;
+        const upd = () => {
+          if (rm.matches) { hero.style.setProperty("--hs", "0"); return; }
+          const h = hero.offsetHeight || window.innerHeight;
+          const p = Math.max(0, Math.min(1, window.scrollY / (h * 0.85)));
+          hero.style.setProperty("--hs", p.toFixed(3));
+        };
+        const on = () => { if (raf) cancelAnimationFrame(raf); raf = requestAnimationFrame(upd); };
+        window.addEventListener("scroll", on, { passive: true });
+        window.addEventListener("resize", on, { passive: true });
+        upd();
+      })();
+
+      // Figura técnica de la estructura: el volumen punteado se DIBUJA línea a línea al
+      // entrar en pantalla y luego aparecen las cotas con las medidas reales. Re-anima
+      // en cada visita a la sección (misma técnica que las líneas del plano).
+      (function () {
+        const fig = document.getElementById("buildFig");
+        if (!fig) return;
+        const img = document.getElementById("buildImg");
+        if (img) {
+          const hideFig = () => { fig.style.display = "none"; };
+          img.addEventListener("error", hideFig);
+          if (img.complete && img.naturalWidth === 0) hideFig();   // el 404 pudo llegar antes del listener
+          // sondeo temprano e independiente del lazy-load: si el archivo no existe (o el
+          // server devuelve HTML de fallback), la figura se retira antes de verse rota
+          fetch(img.getAttribute("src"), { method: "HEAD" })
+            .then((r) => { if (!r.ok || !(r.headers.get("content-type") || "").startsWith("image")) hideFig(); })
+            .catch(hideFig);
+        }
+        const lines = Array.from(fig.querySelectorAll(".bl"));
+        const dims = Array.from(fig.querySelectorAll(".build-dim"));
+        const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const showAll = () => { lines.forEach((l) => { l.style.opacity = 1; l.classList.add("flow"); }); dims.forEach((d) => d.classList.add("on")); };
+        if (!window.gsap || rm.matches || !("IntersectionObserver" in window)) { showAll(); return; }
+        let shown = false;
+        const reveal = () => {
+          gsap.killTweensOf(lines);
+          const tl = gsap.timeline();
+          lines.forEach((l, i) => {
+            const len = l.getTotalLength ? l.getTotalLength() : 400;
+            gsap.set(l, { opacity: 1, strokeDasharray: len, strokeDashoffset: len });
+            tl.to(l, { strokeDashoffset: 0, duration: .38, ease: "power1.inOut",
+              onComplete: () => { l.style.strokeDasharray = ""; l.style.strokeDashoffset = ""; l.classList.add("flow"); } }, i * 0.08);
+          });
+          tl.call(() => dims.forEach((d) => d.classList.add("on")), null, 0.45);
+        };
+        const hide = () => {
+          gsap.killTweensOf(lines);
+          lines.forEach((l) => { l.style.opacity = 0; l.classList.remove("flow"); });
+          dims.forEach((d) => d.classList.remove("on"));
+        };
+        new IntersectionObserver((es) => {
+          const vis = es[0].intersectionRatio >= 0.45;
+          if (vis && !shown) { shown = true; reveal(); }
+          else if (!vis && shown) { shown = false; hide(); }
+        }, { threshold: [0, 0.45] }).observe(fig);
+      })();
+
+      // Cotas del terreno (aérea): se dibujan al entrar, aparecen las medidas y fluyen
+      (function () {
+        const fig = document.getElementById("landFig");
+        if (!fig) return;
+        const lines = Array.from(fig.querySelectorAll(".bl"));
+        const dims = Array.from(fig.querySelectorAll(".build-dim"));
+        const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const showAll = () => { lines.forEach((l) => { l.style.opacity = 1; l.classList.add("flow"); }); dims.forEach((d) => d.classList.add("on")); };
+        if (!window.gsap || rm.matches || !("IntersectionObserver" in window)) { showAll(); return; }
+        let shown = false;
+        const reveal = () => {
+          gsap.killTweensOf(lines);
+          const tl = gsap.timeline();
+          lines.forEach((l, i) => {
+            const len = l.getTotalLength ? l.getTotalLength() : 700;
+            gsap.set(l, { opacity: 1, strokeDasharray: len, strokeDashoffset: len });
+            tl.to(l, { strokeDashoffset: 0, duration: .55, ease: "power1.inOut",
+              onComplete: () => { l.style.strokeDasharray = ""; l.style.strokeDashoffset = ""; l.classList.add("flow"); } }, i * 0.12);
+          });
+          tl.call(() => dims.forEach((d) => d.classList.add("on")), null, 0.4);
+        };
+        const hide = () => {
+          gsap.killTweensOf(lines);
+          lines.forEach((l) => { l.style.opacity = 0; l.classList.remove("flow"); });
+          dims.forEach((d) => d.classList.remove("on"));
+        };
+        new IntersectionObserver((es) => {
+          const vis = es[0].intersectionRatio >= 0.4;
+          if (vis && !shown) { shown = true; reveal(); }
+          else if (!vis && shown) { shown = false; hide(); }
+        }, { threshold: [0, 0.4] }).observe(fig);
+      })();
+
+      // Mapa de ubicación: init perezoso (cuando la sección se acerca) con Leaflet + CARTO.
+      // scrollWheelZoom desactivado a propósito: la rueda NUNCA se secuestra en esta página.
+      (function () {
+        const mapEl = document.getElementById("locMap");
+        if (!mapEl || !("IntersectionObserver" in window)) return;
+        const COORDS = [13.772279, -89.352881];
+        let started = false;
+        function init(intentos) {
+          if (!window.L) { if (intentos > 0) setTimeout(() => init(intentos - 1), 350); return; }
+          const map = L.map(mapEl, { scrollWheelZoom: false, attributionControl: true }).setView(COORDS, 15);
+          mapEl._map = map;   // referencia para depuración/tests
+          L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+            attribution: "&copy; OpenStreetMap &copy; CARTO", maxZoom: 19,
+          }).addTo(map);
+          const icon = L.divIcon({ className: "loc-pin", html: "<span></span>", iconSize: [34, 44], iconAnchor: [17, 40] });
+          L.marker(COORDS, { icon: icon, keyboard: false }).addTo(map);
+          // re-centrar: el botón aparece cuando el usuario se aleja del punto
+          const rc = document.getElementById("locRecenter");
+          if (rc) {
+            const check = () => {
+              const c = map.getCenter();
+              const lejos = Math.abs(c.lat - COORDS[0]) > 0.0015 || Math.abs(c.lng - COORDS[1]) > 0.0015 || map.getZoom() !== 15;
+              rc.classList.toggle("show", lejos);
+            };
+            map.on("moveend zoomend", check);
+            rc.addEventListener("click", () => map.flyTo(COORDS, 15, { duration: 0.8 }));
+          }
+        }
+        new IntersectionObserver((es, io) => {
+          if (es[0].isIntersecting && !started) { started = true; io.disconnect(); init(12); }
+        }, { rootMargin: "300px" }).observe(mapEl);
+      })();
+
+      // Menú móvil: hamburguesa ↔ overlay (Escape cierra; un tap en cualquier enlace
+      // cierra y deja que el handler global de anclas haga el scroll suave)
+      (function () {
+        const burger = document.getElementById("navBurger");
+        const menu = document.getElementById("navMenu");
+        if (!burger || !menu) return;
+        const setOpen = (open) => {
+          document.body.classList.toggle("menu-open", open);
+          burger.setAttribute("aria-expanded", String(open));
+          burger.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+          menu.setAttribute("aria-hidden", String(!open));
+        };
+        burger.addEventListener("click", () => setOpen(!document.body.classList.contains("menu-open")));
+        menu.addEventListener("click", (e) => { if (e.target.closest("a")) setOpen(false); });
+        window.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+      })();
+
+      // Enlaces internos suaves (reemplaza el `scroll-behavior: smooth` del CSS, que
+      // rompía toda animación de scroll hecha en JS). Parten del reposo → power2.inOut.
+      (function () {
+        const rm = window.matchMedia("(prefers-reduced-motion: reduce)");
+        document.addEventListener("click", (e) => {
+          const a = e.target.closest && e.target.closest('a[href^="#"]');
+          if (!a) return;
+          const id = a.getAttribute("href").slice(1);
+          const t = id ? document.getElementById(id) : document.body;
+          if (!t) return;
+          e.preventDefault();
+          const y = Math.round(window.scrollY + t.getBoundingClientRect().top);
+          if (rm.matches || !(window.gsap && gsap.plugins && gsap.plugins.scrollTo)) { window.scrollTo(0, y); return; }
+          gsap.to(window, { scrollTo: { y: y, autoKill: false }, duration: 0.8, ease: "power2.inOut", overwrite: true });
+        });
+      })();
+
+      // Reveal on scroll
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+      }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>
